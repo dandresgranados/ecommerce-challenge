@@ -1,0 +1,41 @@
+# =====================================================================
+# Perfil DEV — desarrollo local.
+# Base de datos H2 en memoria: no requiere instalar nada, se pierde al reiniciar.
+# =====================================================================
+spring:
+  datasource:
+    # jdbc:h2:mem:<nombre> → BD en memoria (RAM), muere al parar la app.
+    # DB_CLOSE_DELAY=-1 → mantiene la BD viva mientras haya alguna conexión.
+    url: jdbc:h2:mem:ecommerce;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  jpa:
+    # Genera SQL compatible con PostgreSQL aunque estemos en H2.
+    # Así lo que escribamos aquí funcionará también en producción sin cambios.
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      # create-drop = recrea las tablas al arrancar y las borra al parar.
+      # Perfecto para desarrollo. En prod usaremos "validate".
+      ddl-auto: create-drop
+    # Muestra el SQL generado en los logs (útil para aprender/depurar).
+    show-sql: true
+
+  # Consola web de H2 → http://localhost:8080/h2-console
+  # JDBC URL en el login: jdbc:h2:mem:ecommerce
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # Carga automáticamente data.sql con datos semilla al arrancar.
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    # Ver todas las queries JPA + sus parámetros. Muy útil en desarrollo.
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

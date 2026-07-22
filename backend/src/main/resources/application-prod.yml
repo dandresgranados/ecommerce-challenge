@@ -1,0 +1,39 @@
+# =====================================================================
+# Perfil PROD — producción con PostgreSQL.
+# Todos los valores sensibles vienen por variable de entorno.
+# Se activa con: SPRING_PROFILES_ACTIVE=prod
+# =====================================================================
+spring:
+  datasource:
+    # docker-compose expondrá el host "postgres" (nombre del servicio).
+    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/ecommerce}
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USERNAME:ecommerce}
+    password: ${DATABASE_PASSWORD:changeme}
+    hikari:
+      # Tamaño del pool de conexiones. HikariCP es el default en Spring Boot.
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      # validate = compara tus @Entity con las tablas reales, falla si difieren.
+      # NO modifica el esquema. En prod las migraciones se hacen con
+      # Flyway o Liquibase (fuera del alcance de esta prueba).
+      ddl-auto: validate
+    show-sql: false
+
+  # Sin consola H2 ni scripts de inicialización en prod.
+  h2:
+    console:
+      enabled: false
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    root: INFO
+    com.tgs.ecommerce: INFO
+    org.hibernate.SQL: WARN

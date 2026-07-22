@@ -1,0 +1,64 @@
+# =====================================================================
+# Configuración BASE — común a todos los perfiles.
+# Sección más abajo (spring.profiles.active) fija "dev" por defecto.
+# En producción se sobreescribe con SPRING_PROFILES_ACTIVE=prod.
+# =====================================================================
+spring:
+  application:
+    name: ecommerce-api
+
+  profiles:
+    # Perfil activo por defecto. Se sobreescribe con la variable de
+    # entorno SPRING_PROFILES_ACTIVE o el flag --spring.profiles.active.
+    active: dev
+
+  jpa:
+    # open-in-view=false: cierra la sesión JPA al terminar el controller.
+    # Evita el antipatrón "lazy-loading en la vista" que causa N+1 queries.
+    open-in-view: false
+    properties:
+      hibernate:
+        # Formatea el SQL en los logs (más legible).
+        format_sql: true
+
+  jackson:
+    # ISO-8601 en JSON (ej: "2026-07-21T14:30:00Z") en vez de timestamp numérico.
+    serialization:
+      write-dates-as-timestamps: false
+
+# =====================================================================
+# Configuración de la aplicación (personalizada, no de Spring).
+# Se lee con @ConfigurationProperties en clases Java.
+# =====================================================================
+app:
+  # Secreto para firmar JWT. En producción usar variable de entorno.
+  jwt:
+    secret: ${JWT_SECRET:cambia-esto-en-produccion-usa-una-clave-de-256-bits-o-mas}
+    # Duración del token en milisegundos (24h por defecto).
+    expiration-ms: 86400000
+  # Umbral para considerar "cliente frecuente" (nº de órdenes en ventana).
+  loyalty:
+    frequent-customer-threshold: 5
+    window-days: 30
+    frequent-discount-rate: 0.05
+
+# =====================================================================
+# Actuator — endpoints de salud/info.
+# Solo exponemos "health" e "info" por seguridad.
+# =====================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# =====================================================================
+# Logging global.
+# =====================================================================
+logging:
+  level:
+    root: INFO
+    com.tgs.ecommerce: DEBUG
