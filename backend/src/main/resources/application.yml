@@ -21,10 +21,8 @@ spring:
         # Formatea el SQL en los logs (más legible).
         format_sql: true
 
-  jackson:
-    # ISO-8601 en JSON (ej: "2026-07-21T14:30:00Z") en vez de timestamp numérico.
-    serialization:
-      write-dates-as-timestamps: false
+  # Nota: Jackson 3 (Spring Boot 4+) serializa fechas como ISO-8601 por defecto,
+  # así que ya no necesitamos configurar write-dates-as-timestamps.
 
 # =====================================================================
 # Configuración de la aplicación (personalizada, no de Spring).

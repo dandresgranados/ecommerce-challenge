@@ -21,6 +21,9 @@ spring:
       ddl-auto: create-drop
     # Muestra el SQL generado en los logs (útil para aprender/depurar).
     show-sql: true
+    # Ejecuta data.sql DESPUÉS de que Hibernate cree las tablas.
+    # Sin esto, Spring Boot intenta correr el script antes y falla.
+    defer-datasource-initialization: true
 
   # Consola web de H2 → http://localhost:8080/h2-console
   # JDBC URL en el login: jdbc:h2:mem:ecommerce
