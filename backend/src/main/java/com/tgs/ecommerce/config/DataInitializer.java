@@ -1,10 +1,16 @@
 package com.tgs.ecommerce.config;
 
+import com.tgs.ecommerce.order.domain.DiscountWindow;
+import com.tgs.ecommerce.order.domain.DiscountWindowType;
+import com.tgs.ecommerce.order.repository.DiscountWindowRepository;
 import com.tgs.ecommerce.user.domain.Role;
 import com.tgs.ecommerce.user.domain.RoleName;
 import com.tgs.ecommerce.user.domain.User;
 import com.tgs.ecommerce.user.repository.RoleRepository;
 import com.tgs.ecommerce.user.repository.UserRepository;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,16 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Inicializador de datos para el perfil {@code dev}.
  *
- * <p>Al arrancar la app crea los usuarios semilla si aún no existen:
+ * <p>Al arrancar la app crea, si aún no existen:
  * <ul>
- *   <li>{@code admin / admin123} — rol ADMIN</li>
- *   <li>{@code user  / user123}  — rol USER</li>
+ *   <li>Usuarios: {@code admin/admin123} (ADMIN) y {@code user/user123} (USER).</li>
+ *   <li>Ventanas de descuento activas: 10 % GLOBAL y 50 % RANDOM
+ *       (ambas válidas por 1 año, para poder probar todo el flujo).</li>
  * </ul>
  *
- * <p>Idempotente: si los usuarios ya existen (segundo arranque), no hace nada.
- *
- * <p>{@code @Profile("dev")}: NO se ejecuta en producción — allí los
- * usuarios se crean con el endpoint de registro o los inserta el DBA.
+ * <p>Idempotente: cada bloque comprueba si ya hay datos y salta si es así.
  */
 @Slf4j
 @Component
@@ -37,12 +41,18 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DiscountWindowRepository discountWindowRepository;
 
     @Override
     @Transactional
     public void run(String... args) {
+        seedUsers();
+        seedDiscountWindows();
+    }
+
+    private void seedUsers() {
         if (userRepository.count() > 0) {
-            log.info("Usuarios ya presentes en la BD — saltando semilla");
+            log.info("Usuarios ya presentes en la BD — saltando semilla de usuarios");
             return;
         }
 
@@ -77,5 +87,37 @@ public class DataInitializer implements CommandLineRunner {
         log.info("  admin / admin123  (roles: ADMIN, USER)");
         log.info("  user  / user123   (roles: USER)");
         log.info("=====================================================");
+    }
+
+    private void seedDiscountWindows() {
+        if (discountWindowRepository.count() > 0) {
+            log.info("DiscountWindows ya presentes — saltando semilla");
+            return;
+        }
+
+        Instant start = Instant.now().minus(1, ChronoUnit.DAYS);
+        Instant end = Instant.now().plus(365, ChronoUnit.DAYS);
+
+        DiscountWindow global = DiscountWindow.builder()
+            .name("Promoción anual global")
+            .type(DiscountWindowType.GLOBAL)
+            .rate(new BigDecimal("0.1000"))
+            .startAt(start)
+            .endAt(end)
+            .active(true)
+            .build();
+
+        DiscountWindow random = DiscountWindow.builder()
+            .name("Promoción anual pedido aleatorio")
+            .type(DiscountWindowType.RANDOM)
+            .rate(new BigDecimal("0.5000"))
+            .startAt(start)
+            .endAt(end)
+            .active(true)
+            .build();
+
+        discountWindowRepository.save(global);
+        discountWindowRepository.save(random);
+        log.info("DiscountWindows semilla creadas: GLOBAL 10% y RANDOM 50% (1 año)");
     }
 }
