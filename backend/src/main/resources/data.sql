@@ -38,3 +38,14 @@ INSERT INTO inventory (id, product_id, quantity, min_stock, version, created_at,
 VALUES (4, 4, 15, 3, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 INSERT INTO inventory (id, product_id, quantity, min_stock, version, created_at, updated_at, created_by, updated_by)
 VALUES (5, 5, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+
+-- ============================================================
+-- Reiniciar las secuencias auto-increment más allá de los IDs
+-- semilla para evitar colisiones cuando Hibernate genere nuevos IDs
+-- vía save(). Sintaxis compatible con PostgreSQL (H2 lo entiende
+-- gracias a MODE=PostgreSQL).
+-- ============================================================
+ALTER TABLE roles       ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE categories  ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE products    ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE inventory   ALTER COLUMN id RESTART WITH 100;
