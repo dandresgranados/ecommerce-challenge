@@ -1,5 +1,6 @@
 package com.tgs.ecommerce.security;
 
+import com.tgs.ecommerce.order.service.LoyaltyProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableMethodSecurity   // habilita @PreAuthorize/@PostAuthorize en los controllers/services
-@EnableConfigurationProperties(JwtProperties.class)
+@EnableConfigurationProperties({JwtProperties.class, LoyaltyProperties.class})
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
 
