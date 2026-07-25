@@ -1,6 +1,7 @@
 package com.tgs.ecommerce.product.repository;
 
 import com.tgs.ecommerce.product.domain.Product;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -20,4 +21,7 @@ public interface ProductRepository
     boolean existsBySku(String sku);
 
     boolean existsByCategoryId(Long categoryId);
+
+    /** Productos activos ordenados alfabéticamente (para el reporte). */
+    List<Product> findByActiveTrueOrderByNameAsc();
 }

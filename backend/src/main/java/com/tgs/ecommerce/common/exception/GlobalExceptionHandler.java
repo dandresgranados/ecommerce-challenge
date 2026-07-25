@@ -3,6 +3,7 @@ package com.tgs.ecommerce.common.exception;
 import com.tgs.ecommerce.common.dto.ApiError;
 import com.tgs.ecommerce.common.dto.ApiError.FieldError;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import java.time.Instant;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         List<FieldError> fields = ex.getBindingResult().getFieldErrors().stream()
             .map(fe -> new FieldError(fe.getField(), fe.getDefaultMessage()))
+            .toList();
+        return build(HttpStatus.BAD_REQUEST, "Errores de validación", req, fields);
+    }
+
+    /**
+     * Errores de validación de @Validated en parámetros simples de método
+     * (por ejemplo, {@code @RequestParam @Positive int limit}).
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiError> handleConstraintViolation(
+        ConstraintViolationException ex, HttpServletRequest req
+    ) {
+        List<FieldError> fields = ex.getConstraintViolations().stream()
+            .map(cv -> new FieldError(cv.getPropertyPath().toString(), cv.getMessage()))
             .toList();
         return build(HttpStatus.BAD_REQUEST, "Errores de validación", req, fields);
     }
