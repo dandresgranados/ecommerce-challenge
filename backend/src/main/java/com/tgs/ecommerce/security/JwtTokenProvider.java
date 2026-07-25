@@ -3,7 +3,6 @@ package com.tgs.ecommerce.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -36,20 +35,14 @@ public class JwtTokenProvider {
     private final long expirationMs;
 
     public JwtTokenProvider(JwtProperties props) {
-        // Aceptamos tanto una clave Base64 como texto plano. Si el string tiene
-        // longitud suficiente en bytes UTF-8, lo usamos directo.
-        byte[] keyBytes;
-        try {
-            keyBytes = Decoders.BASE64.decode(props.getSecret());
-            if (keyBytes.length < 32) {
-                keyBytes = props.getSecret().getBytes(StandardCharsets.UTF_8);
-            }
-        } catch (IllegalArgumentException e) {
-            keyBytes = props.getSecret().getBytes(StandardCharsets.UTF_8);
-        }
+        // El secreto se interpreta como texto UTF-8. Debe tener al menos 32
+        // bytes (256 bits) porque HS256 lo exige. En producción se pasa por
+        // la variable de entorno JWT_SECRET.
+        byte[] keyBytes = props.getSecret().getBytes(StandardCharsets.UTF_8);
         if (keyBytes.length < 32) {
             throw new IllegalStateException(
-                "app.jwt.secret debe tener al menos 32 bytes (256 bits) para HS256");
+                "app.jwt.secret debe tener al menos 32 caracteres (256 bits) para HS256. "
+                + "Longitud actual: " + keyBytes.length);
         }
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMs = props.getExpirationMs();
