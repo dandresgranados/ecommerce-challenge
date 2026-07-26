@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 500;
+  }
+
+  .subtitle {
+    margin: 0.25rem 0 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.random-badge {
+  font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+  color: var(--mat-sys-primary);
+}
+
+.discount-info {
+  font-size: 0.75rem;
+  color: var(--mat-sys-primary);
+  font-weight: 500;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Fila resaltada tras crear una orden desde checkout.
+.highlight {
+  background: color-mix(in srgb, var(--mat-sys-primary) 15%, transparent);
+  animation: highlight-fade 4s ease-out forwards;
+}
+
+@keyframes highlight-fade {
+  0% { background: color-mix(in srgb, var(--mat-sys-primary) 25%, transparent); }
+  100% { background: transparent; }
+}
+
+mat-progress-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}

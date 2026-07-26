@@ -9,10 +9,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatBadgeModule } from '@angular/material/badge';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { filter, map } from 'rxjs/operators';
 
 import { AuthService } from '../core/services/auth.service';
+import { CartService } from '../core/services/cart.service';
 import { Role } from '../core/models/role.model';
 
 interface NavItem {
@@ -48,7 +50,8 @@ interface NavItem {
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatDividerModule
+    MatDividerModule,
+    MatBadgeModule
   ],
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
@@ -58,6 +61,7 @@ export class LayoutComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly auth = inject(AuthService);
+  protected readonly cart = inject(CartService);
 
   /** Signal que se recalcula cuando cambia el tamaño de pantalla. */
   protected readonly isMobile = signal(false);
@@ -120,5 +124,7 @@ export class LayoutComponent {
 
   logout(): void {
     this.auth.logout();
+    // Vaciamos el carrito al cerrar sesión — otro usuario podría iniciar sesión aquí.
+    this.cart.clear();
   }
 }

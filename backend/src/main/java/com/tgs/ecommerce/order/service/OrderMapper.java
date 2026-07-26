@@ -49,10 +49,16 @@ public final class OrderMapper {
         );
     }
 
-    /** Fallback para listados: sin desglose real, solo el rate total. */
+    /**
+     * Reconstruye el desglose leyendo los rates individuales persistidos
+     * en la propia entidad {@link Order}. Se usa cuando no tenemos un
+     * {@link DiscountBreakdown} recién calculado (listados históricos).
+     */
     private static DiscountBreakdownDto reconstructBreakdown(Order order) {
         return new DiscountBreakdownDto(
-            BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+            order.getDiscountGlobalRate(),
+            order.getDiscountRandomRate(),
+            order.getDiscountLoyaltyRate(),
             order.getDiscountRate());
     }
 }

@@ -40,14 +40,19 @@ export const routes: Routes = [
       },
       {
         path: 'orders',
-        component: PlaceholderComponent,
-        data: {
-          title: 'Mis órdenes',
-          phase: 'Fase 4.4',
-          description:
-            'Aquí verás tu carrito, podrás crear órdenes (con los descuentos automáticos aplicados) y consultar el historial de pedidos anteriores.'
-        },
+        loadComponent: () =>
+          import('./features/orders/my-orders/my-orders').then(
+            (m) => m.MyOrdersComponent
+          ),
         title: 'Mis órdenes · TGS'
+      },
+      {
+        path: 'checkout',
+        loadComponent: () =>
+          import('./features/orders/checkout/checkout').then(
+            (m) => m.CheckoutComponent
+          ),
+        title: 'Carrito · TGS'
       },
       {
         path: 'reports',

@@ -90,6 +90,21 @@ public class Order extends AuditableEntity {
     @Builder.Default
     private BigDecimal discountRate = BigDecimal.ZERO;
 
+    /** Componente del descuento total aportado por la ventana GLOBAL activa. */
+    @Column(name = "discount_global_rate", nullable = false, precision = 5, scale = 4)
+    @Builder.Default
+    private BigDecimal discountGlobalRate = BigDecimal.ZERO;
+
+    /** Componente aportado por la ventana RANDOM (si el usuario marcó pedido aleatorio). */
+    @Column(name = "discount_random_rate", nullable = false, precision = 5, scale = 4)
+    @Builder.Default
+    private BigDecimal discountRandomRate = BigDecimal.ZERO;
+
+    /** Componente aportado por ser cliente frecuente. */
+    @Column(name = "discount_loyalty_rate", nullable = false, precision = 5, scale = 4)
+    @Builder.Default
+    private BigDecimal discountLoyaltyRate = BigDecimal.ZERO;
+
     /**
      * Importe final ya con el descuento aplicado.
      * total = subtotal * (1 - discountRate). Se persiste (aunque sea

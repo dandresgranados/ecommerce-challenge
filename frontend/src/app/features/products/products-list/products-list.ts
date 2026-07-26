@@ -22,6 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { CartService } from '../../../core/services/cart.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { PageQuery, ProductService } from '../../../core/services/product.service';
 import { Category } from '../../../core/models/category.model';
@@ -74,6 +75,7 @@ export class ProductsListComponent implements AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly productService = inject(ProductService);
   private readonly categoryService = inject(CategoryService);
+  private readonly cart = inject(CartService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -102,10 +104,11 @@ export class ProductsListComponent implements AfterViewInit {
   private paging: PageQuery = { page: 0, size: 10, sort: 'name,asc' };
 
   ngOnInit(): void {
+    // La columna "actions" se muestra siempre: contiene "añadir al carrito"
+    // para todos y, adicionalmente, editar/eliminar para admin (condicionado
+    // dentro de la celda con @if auth.isAdmin()).
     this.displayedColumns.set(
-      this.auth.isAdmin()
-        ? ['sku', 'name', 'category', 'price', 'stock', 'active', 'actions']
-        : ['sku', 'name', 'category', 'price', 'stock']
+      ['sku', 'name', 'category', 'price', 'stock', 'active', 'actions']
     );
 
     this.categoryService.list().subscribe({
@@ -234,10 +237,17 @@ export class ProductsListComponent implements AfterViewInit {
 
   // Placeholder para Fase 4.4 — hoy sólo muestra un mensaje.
   addToCart(product: Product): void {
-    this.snackBar.open(
-      `"${product.name}" se añadirá al carrito en la Fase 4.4`,
-      'Cerrar',
-      { duration: 3000 }
-    );
+    const added = this.cart.add(product, 1);
+    if (added) {
+      this.snackBar.open(`"${product.name}" añadido al carrito`, 'Cerrar', {
+        duration: 2500
+      });
+    } else {
+      this.snackBar.open(
+        `No hay más stock disponible de "${product.name}"`,
+        'Cerrar',
+        { duration: 3000 }
+      );
+    }
   }
 }

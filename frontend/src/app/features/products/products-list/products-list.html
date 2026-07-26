@@ -142,21 +142,23 @@
           >
             <mat-icon>add_shopping_cart</mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="openEdit(p)"
-            matTooltip="Editar"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            color="warn"
-            (click)="confirmDelete(p)"
-            matTooltip="Eliminar"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
+          @if (auth.isAdmin()) {
+            <button
+              mat-icon-button
+              (click)="openEdit(p)"
+              matTooltip="Editar"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="confirmDelete(p)"
+              matTooltip="Eliminar"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
         </td>
       </ng-container>
 

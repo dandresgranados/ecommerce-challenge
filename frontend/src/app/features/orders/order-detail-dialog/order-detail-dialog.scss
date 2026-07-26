@@ -1,0 +1,75 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .status-chip {
+    margin-left: auto;
+    font-size: 0.75rem;
+  }
+}
+
+mat-dialog-content {
+  min-width: 620px;
+
+  @media (max-width: 720px) {
+    min-width: unset;
+  }
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  font-size: 0.9rem;
+
+  strong {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+h3 {
+  margin: 1rem 0 0.5rem;
+  font-weight: 500;
+}
+
+.items-table {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.right {
+  text-align: right;
+}
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-top: 0.5rem;
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.35rem 0;
+    font-size: 0.95rem;
+
+    &.muted {
+      color: var(--mat-sys-on-surface-variant);
+      font-size: 0.9rem;
+    }
+
+    &.emphasized {
+      font-weight: 500;
+      padding: 0.5rem 0;
+    }
+
+    &.total {
+      font-weight: 500;
+      font-size: 1.15rem;
+      color: var(--mat-sys-primary);
+      padding: 0.5rem 0;
+    }
+  }
+}

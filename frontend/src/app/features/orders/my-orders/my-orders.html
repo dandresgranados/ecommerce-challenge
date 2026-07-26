@@ -1,0 +1,116 @@
+<section class="page-header">
+  <div>
+    <h1>Mis órdenes</h1>
+    <p class="subtitle">Historial completo. Total: {{ totalElements() }} orden(es).</p>
+  </div>
+</section>
+
+<mat-card class="table-card">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <div class="table-scroll">
+    <table mat-table [dataSource]="orders()" class="orders-table">
+      <ng-container matColumnDef="orderNumber">
+        <th mat-header-cell *matHeaderCellDef>Orden</th>
+        <td mat-cell *matCellDef="let o">
+          <strong>{{ o.orderNumber }}</strong>
+          @if (o.randomOrder) {
+            <mat-icon
+              class="random-badge"
+              matTooltip="Pedido aleatorio"
+            >casino</mat-icon>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let o">{{ o.createdAt | date: 'short' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="items">
+        <th mat-header-cell *matHeaderCellDef class="center">Ítems</th>
+        <td mat-cell *matCellDef="let o" class="center">{{ o.items.length }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef class="right">Total</th>
+        <td mat-cell *matCellDef="let o" class="right">
+          <strong>{{ o.total | currency: 'USD':'symbol':'1.2-2' }}</strong>
+          @if (o.discountRate > 0) {
+            <div class="discount-info">
+              {{ o.discountRate * 100 | number: '1.0-2' }} % dcto
+            </div>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let o">
+          <mat-chip [color]="getStatusColor(o)" highlighted>
+            {{ getStatusLabel(o) }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="right">Acciones</th>
+        <td mat-cell *matCellDef="let o" class="right actions-cell">
+          <button
+            mat-icon-button
+            (click)="openDetail(o)"
+            matTooltip="Ver detalle"
+          >
+            <mat-icon>visibility</mat-icon>
+          </button>
+          @if (o.status === 'CREATED') {
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="confirmPay(o)"
+              matTooltip="Pagar"
+            >
+              <mat-icon>payments</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="confirmCancel(o)"
+              matTooltip="Cancelar"
+            >
+              <mat-icon>cancel</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns;"
+        [class.highlight]="row.id === highlightId()"
+      ></tr>
+
+      <tr *matNoDataRow>
+        <td [attr.colspan]="displayedColumns.length" class="no-data">
+          @if (loading()) {
+            <span>Cargando...</span>
+          } @else {
+            <span>Aún no tienes órdenes. Ve al catálogo para crear la primera.</span>
+          }
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator
+    [length]="totalElements()"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20, 50]"
+    (page)="onPage($event)"
+    showFirstLastButtons
+  ></mat-paginator>
+</mat-card>

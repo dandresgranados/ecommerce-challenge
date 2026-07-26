@@ -1,0 +1,158 @@
+<section class="page-header">
+  <div>
+    <h1>Carrito de compras</h1>
+    <p class="subtitle">
+      {{ cart.itemCount() }} unidad(es) · {{ cart.items().length }} producto(s)
+    </p>
+  </div>
+  @if (!cart.isEmpty()) {
+    <button mat-stroked-button color="warn" (click)="clearCart()" [disabled]="loading()">
+      <mat-icon>delete_sweep</mat-icon>
+      Vaciar carrito
+    </button>
+  }
+</section>
+
+@if (cart.isEmpty()) {
+  <mat-card class="empty-card">
+    <mat-icon>shopping_cart_off</mat-icon>
+    <h2>Tu carrito está vacío</h2>
+    <p>Explora el catálogo para añadir productos y crear una orden.</p>
+    <a mat-flat-button color="primary" routerLink="/products">
+      <mat-icon>storefront</mat-icon>
+      Ver productos
+    </a>
+  </mat-card>
+} @else {
+  <div class="checkout-grid">
+    <mat-card class="items-card">
+      <div class="table-scroll">
+        <table mat-table [dataSource]="cart.items()" class="items-table">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Producto</th>
+            <td mat-cell *matCellDef="let item">
+              <div>
+                <strong>{{ item.name }}</strong>
+                <div class="sku">{{ item.sku }}</div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="unitPrice">
+            <th mat-header-cell *matHeaderCellDef class="right">Precio</th>
+            <td mat-cell *matCellDef="let item" class="right">
+              {{ item.unitPrice | currency: 'USD':'symbol':'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef class="center">Cantidad</th>
+            <td mat-cell *matCellDef="let item" class="center">
+              <div class="qty-controls">
+                <button
+                  mat-icon-button
+                  (click)="decrement(item.productId, item.quantity)"
+                  matTooltip="Quitar 1"
+                >
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <input
+                  type="number"
+                  class="qty-input"
+                  [value]="item.quantity"
+                  min="1"
+                  [max]="item.maxStock"
+                  (change)="onQuantityChange(item.productId, $event)"
+                />
+                <button
+                  mat-icon-button
+                  (click)="increment(item.productId, item.quantity, item.maxStock)"
+                  [disabled]="item.quantity >= item.maxStock"
+                  matTooltip="Añadir 1"
+                >
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="lineTotal">
+            <th mat-header-cell *matHeaderCellDef class="right">Subtotal</th>
+            <td mat-cell *matCellDef="let item" class="right">
+              <strong>{{ item.unitPrice * item.quantity | currency: 'USD':'symbol':'1.2-2' }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="right"></th>
+            <td mat-cell *matCellDef="let item" class="right">
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="remove(item.productId)"
+                matTooltip="Eliminar"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <h3>Resumen</h3>
+      <mat-divider></mat-divider>
+
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>{{ subtotal() | currency: 'USD':'symbol':'1.2-2' }}</span>
+      </div>
+
+      <div class="summary-row">
+        <span>Descuento estimado</span>
+        <span class="muted">{{ estimatedDiscountLabel() }}</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <form [formGroup]="form" class="random-toggle-wrapper">
+        <mat-slide-toggle formControlName="randomOrder" color="primary">
+          Pedido aleatorio (50 % dcto si hay ventana RANDOM activa)
+        </mat-slide-toggle>
+        <p class="hint">
+          Además, el backend puede aplicar automáticamente un 10 % global
+          y un 5 % extra si eres cliente frecuente.
+        </p>
+      </form>
+
+      <mat-divider></mat-divider>
+
+      <div class="summary-row total-row">
+        <span>Total a confirmar</span>
+        <span>~ {{ subtotal() | currency: 'USD':'symbol':'1.2-2' }}</span>
+      </div>
+      <p class="disclaimer">El total final lo calcula el backend según las ventanas activas.</p>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="confirm-btn"
+        (click)="confirmOrder()"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <ng-container>
+            <mat-icon>check_circle</mat-icon>
+            Confirmar orden
+          </ng-container>
+        }
+      </button>
+    </mat-card>
+  </div>
+}
