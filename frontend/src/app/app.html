@@ -1,38 +1,35 @@
-<mat-toolbar color="primary">
-  <mat-icon>storefront</mat-icon>
-  <span class="toolbar-title">{{ title() }}</span>
-  <span class="toolbar-spacer"></span>
-  <button mat-button disabled>
-    <mat-icon>login</mat-icon>
-    Login (Fase 4.1)
-  </button>
-</mat-toolbar>
+@if (showToolbar()) {
+  <mat-toolbar color="primary">
+    <a routerLink="/" class="toolbar-brand">
+      <mat-icon>storefront</mat-icon>
+      <span class="toolbar-title">{{ title() }}</span>
+    </a>
+    <span class="toolbar-spacer"></span>
 
-<main class="content">
-  <mat-card class="welcome-card">
-    <mat-card-header>
-      <mat-card-title>Bienvenido a TGS E-commerce</mat-card-title>
-      <mat-card-subtitle>Plataforma en construcción — Fase 4.0</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p>
-        La base del frontend está lista: Angular Material con tema
-        <strong>Azure Blue</strong>, proxy hacia el backend en
-        <code>http://localhost:8080</code>, HttpClient con interceptor JWT y
-        estructura de carpetas por feature.
-      </p>
-      <p>
-        En la próxima fase se implementará el login contra
-        <code>POST /api/auth/login</code>.
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-flat-button color="primary" disabled>
-        <mat-icon>shopping_cart</mat-icon>
-        Ver productos (próximamente)
+    @if (auth.isAuthenticated()) {
+      <button mat-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+        {{ auth.currentUser()?.username }}
+        <mat-icon>arrow_drop_down</mat-icon>
       </button>
-    </mat-card-actions>
-  </mat-card>
+      <mat-menu #userMenu="matMenu">
+        <div class="menu-header">
+          <div class="menu-name">{{ auth.currentUser()?.fullName || auth.currentUser()?.username }}</div>
+          <div class="menu-email">{{ auth.currentUser()?.email }}</div>
+          <div class="menu-roles">{{ auth.currentUser()?.roles?.join(' · ') }}</div>
+        </div>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </mat-menu>
+    } @else {
+      <a mat-button routerLink="/login">
+        <mat-icon>login</mat-icon>
+        Iniciar sesión
+      </a>
+    }
+  </mat-toolbar>
+}
 
-  <router-outlet />
-</main>
+<router-outlet />

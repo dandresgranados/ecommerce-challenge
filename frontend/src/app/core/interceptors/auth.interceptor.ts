@@ -1,24 +1,41 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
+
+import { AuthService } from '../services/auth.service';
 
 /**
- * Interceptor JWT. Añade el header Authorization: Bearer <token>
- * a todas las peticiones salientes cuando hay un token en localStorage.
+ * Interceptor JWT (funcional). Se ejecuta en cada petición HTTP:
  *
- * En la Fase 4.1 se completará la lectura del token desde AuthService
- * y el manejo de 401 (logout automático).
+ * <ol>
+ *   <li>Añade {@code Authorization: Bearer <token>} cuando el {@link AuthService}
+ *       tiene un token activo.</li>
+ *   <li>Ante un 401 (token expirado o inválido) hace logout automático
+ *       y redirige a /login. Evita bucles ignorando el propio endpoint de login.</li>
+ * </ol>
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  const token = auth.token;
 
-  if (!token) {
-    return next(req);
-  }
+  const authReq = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
 
-  const authReq = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  return next(authReq);
+  return next(authReq).pipe(
+    catchError((error: unknown) => {
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status === 401 &&
+        !req.url.includes('/auth/login') &&
+        !req.url.includes('/auth/register')
+      ) {
+        auth.logout();
+        void router.navigate(['/login']);
+      }
+      return throwError(() => error);
+    })
+  );
 };

@@ -1,0 +1,33 @@
+<div class="home-page">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        Bienvenido{{ auth.currentUser()?.fullName ? ', ' + auth.currentUser()?.fullName : '' }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        Sesión iniciada como <strong>{{ auth.currentUser()?.username }}</strong>
+        &nbsp;·&nbsp; Roles: {{ auth.currentUser()?.roles?.join(', ') }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        Ya estás autenticado. En las próximas fases podrás:
+      </p>
+      <ul>
+        <li>Explorar el catálogo de productos y buscarlos</li>
+        <li>Gestionar tu carrito y crear órdenes con descuentos aplicados</li>
+        <li>Ver tus pedidos anteriores</li>
+        @if (auth.isAdmin()) {
+          <li><strong>[Admin]</strong> Gestionar usuarios, productos, categorías y ventanas de descuento</li>
+          <li><strong>[Admin]</strong> Consultar reportes y auditoría</li>
+        }
+      </ul>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" disabled>
+        <mat-icon>shopping_cart</mat-icon>
+        Ver productos (Fase 4.3)
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

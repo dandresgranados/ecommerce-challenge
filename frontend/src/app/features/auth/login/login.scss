@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+  padding: 1rem;
+  background: var(--mat-sys-surface-container);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 1rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.submit-btn {
+  margin-top: 0.5rem;
+  height: 44px;
+}
+
+.btn-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.register-hint {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9rem;
+  margin-right: 0.25rem;
+}
