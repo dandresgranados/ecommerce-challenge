@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">
+  <mat-icon>storefront</mat-icon>
+  <span class="toolbar-title">{{ title() }}</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-button disabled>
+    <mat-icon>login</mat-icon>
+    Login (Fase 4.1)
+  </button>
+</mat-toolbar>
+
+<main class="content">
+  <mat-card class="welcome-card">
+    <mat-card-header>
+      <mat-card-title>Bienvenido a TGS E-commerce</mat-card-title>
+      <mat-card-subtitle>Plataforma en construcción — Fase 4.0</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        La base del frontend está lista: Angular Material con tema
+        <strong>Azure Blue</strong>, proxy hacia el backend en
+        <code>http://localhost:8080</code>, HttpClient con interceptor JWT y
+        estructura de carpetas por feature.
+      </p>
+      <p>
+        En la próxima fase se implementará el login contra
+        <code>POST /api/auth/login</code>.
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" disabled>
+        <mat-icon>shopping_cart</mat-icon>
+        Ver productos (próximamente)
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <router-outlet />
+</main>
