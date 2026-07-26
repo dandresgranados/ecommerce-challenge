@@ -24,6 +24,15 @@ spring:
   # Nota: Jackson 3 (Spring Boot 4+) serializa fechas como ISO-8601 por defecto,
   # así que ya no necesitamos configurar write-dates-as-timestamps.
 
+# Forzar UTF-8 en toda la comunicación HTTP (request + response),
+# independientemente del charset del sistema operativo.
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 # =====================================================================
 # Configuración de la aplicación (personalizada, no de Spring).
 # Se lee con @ConfigurationProperties en clases Java.

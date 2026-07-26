@@ -32,13 +32,10 @@ export const routes: Routes = [
       },
       {
         path: 'products',
-        component: PlaceholderComponent,
-        data: {
-          title: 'Productos',
-          phase: 'Fase 4.3',
-          description:
-            'Aquí podrás explorar el catálogo, buscar productos por nombre, categoría o rango de precio, y (como admin) crear/editar/eliminar productos.'
-        },
+        loadComponent: () =>
+          import('./features/products/products-list/products-list').then(
+            (m) => m.ProductsListComponent
+          ),
         title: 'Productos · TGS'
       },
       {

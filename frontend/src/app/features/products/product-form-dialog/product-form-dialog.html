@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ isEdit ? 'edit' : 'add_box' }}</mat-icon>
+  {{ isEdit ? 'Editar producto' : 'Nuevo producto' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="product-form">
+    <mat-form-field appearance="outline">
+      <mat-label>SKU</mat-label>
+      <input matInput formControlName="sku" autocomplete="off" />
+      @if (isEdit) {
+        <mat-hint>El SKU no se puede modificar</mat-hint>
+      }
+      @if (form.controls.sku.hasError('required') && form.controls.sku.touched) {
+        <mat-error>El SKU es obligatorio</mat-error>
+      }
+      @if (form.controls.sku.hasError('minlength') && form.controls.sku.touched) {
+        <mat-error>Mínimo 2 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" />
+      @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      }
+      @if (form.controls.name.hasError('minlength') && form.controls.name.touched) {
+        <mat-error>Mínimo 2 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripción (opcional)</mat-label>
+      <textarea matInput formControlName="description" rows="2"></textarea>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Precio</mat-label>
+        <input matInput type="number" formControlName="price" step="0.01" min="0" />
+        <span matTextPrefix>$&nbsp;</span>
+        @if (form.controls.price.hasError('required') && form.controls.price.touched) {
+          <mat-error>El precio es obligatorio</mat-error>
+        }
+        @if (form.controls.price.hasError('min') && form.controls.price.touched) {
+          <mat-error>Debe ser mayor que 0</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="categoryId">
+          @for (cat of data.categories; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.categoryId.hasError('required') && form.controls.categoryId.touched) {
+          <mat-error>Selecciona una categoría</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    @if (!isEdit) {
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Stock inicial</mat-label>
+          <input matInput type="number" formControlName="initialStock" min="0" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Stock mínimo</mat-label>
+          <input matInput type="number" formControlName="minStock" min="0" />
+        </mat-form-field>
+      </div>
+    }
+
+    <mat-slide-toggle formControlName="active" color="primary">
+      Producto activo
+    </mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="loading()">Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="loading()"
+  >
+    @if (loading()) {
+      <mat-spinner diameter="20"></mat-spinner>
+    } @else {
+      <ng-container>{{ isEdit ? 'Guardar cambios' : 'Crear' }}</ng-container>
+    }
+  </button>
+</mat-dialog-actions>
