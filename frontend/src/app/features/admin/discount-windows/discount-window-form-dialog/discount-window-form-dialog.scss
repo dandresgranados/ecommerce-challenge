@@ -1,0 +1,31 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.window-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 480px;
+  padding-top: 0.5rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+mat-slide-toggle {
+  margin: 0.5rem 0;
+}
+
+@media (max-width: 600px) {
+  .window-form { min-width: unset; }
+  .form-row { flex-direction: column; gap: 0; }
+}

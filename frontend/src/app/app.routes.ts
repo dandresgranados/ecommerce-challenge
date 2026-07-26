@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
-import { PlaceholderComponent } from './shared/components/placeholder.component';
 
 export const routes: Routes = [
   {
@@ -69,45 +68,34 @@ export const routes: Routes = [
         children: [
           {
             path: 'users',
-            component: PlaceholderComponent,
-            data: {
-              title: 'Gestión de usuarios',
-              phase: 'Fase 4.6',
-              description:
-                'Listado de usuarios registrados con opciones para activar/desactivar, cambiar roles y auditar accesos.'
-            },
+            loadComponent: () =>
+              import('./features/admin/users/users-management').then(
+                (m) => m.UsersManagementComponent
+              ),
             title: 'Usuarios · TGS'
           },
           {
             path: 'categories',
-            component: PlaceholderComponent,
-            data: {
-              title: 'Categorías',
-              phase: 'Fase 4.6',
-              description: 'CRUD de categorías de productos.'
-            },
+            loadComponent: () =>
+              import('./features/admin/categories/categories-management').then(
+                (m) => m.CategoriesManagementComponent
+              ),
             title: 'Categorías · TGS'
           },
           {
             path: 'discount-windows',
-            component: PlaceholderComponent,
-            data: {
-              title: 'Ventanas de descuento',
-              phase: 'Fase 4.6',
-              description:
-                'CRUD de ventanas de descuento GLOBAL (10 %) y RANDOM (50 %) con vigencia temporal.'
-            },
+            loadComponent: () =>
+              import(
+                './features/admin/discount-windows/discount-windows-management'
+              ).then((m) => m.DiscountWindowsManagementComponent),
             title: 'Ventanas de descuento · TGS'
           },
           {
             path: 'audit',
-            component: PlaceholderComponent,
-            data: {
-              title: 'Auditoría',
-              phase: 'Fase 4.6',
-              description:
-                'Consulta filtrable de eventos del sistema: LOGIN, CREATE, UPDATE, DELETE, PAY, CANCEL, etc.'
-            },
+            loadComponent: () =>
+              import('./features/admin/audit-log/audit-log').then(
+                (m) => m.AuditLogComponent
+              ),
             title: 'Auditoría · TGS'
           }
         ]

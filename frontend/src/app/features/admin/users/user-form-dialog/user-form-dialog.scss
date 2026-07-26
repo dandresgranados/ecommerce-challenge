@@ -1,0 +1,36 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 440px;
+  padding-top: 0.5rem;
+}
+
+.roles-section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.5rem 0;
+
+  .section-label {
+    font-size: 0.85rem;
+    color: var(--mat-sys-on-surface-variant);
+    margin-right: 0.5rem;
+  }
+}
+
+mat-slide-toggle {
+  margin: 0.25rem 0;
+}
+
+@media (max-width: 500px) {
+  .user-form {
+    min-width: unset;
+  }
+}

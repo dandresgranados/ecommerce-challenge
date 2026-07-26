@@ -1,0 +1,131 @@
+<section class="page-header">
+  <div>
+    <h1>Auditoría del sistema</h1>
+    <p class="subtitle">Total: {{ totalElements() }} evento(s)</p>
+  </div>
+</section>
+
+<mat-card class="filters-card">
+  <form [formGroup]="filterForm" class="filters-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Acción</mat-label>
+      <mat-select formControlName="action">
+        <mat-option [value]="null">Todas</mat-option>
+        @for (a of actions; track a) {
+          <mat-option [value]="a">{{ a }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo de entidad</mat-label>
+      <mat-select formControlName="entityType">
+        <mat-option [value]="null">Todas</mat-option>
+        @for (t of entityTypes; track t) {
+          <mat-option [value]="t">{{ t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="small">
+      <mat-label>Entity ID</mat-label>
+      <input matInput type="number" formControlName="entityId" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Usuario</mat-label>
+      <input matInput formControlName="performedBy" placeholder="admin" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Desde</mat-label>
+      <input matInput type="datetime-local" formControlName="from" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Hasta</mat-label>
+      <input matInput type="datetime-local" formControlName="to" />
+    </mat-form-field>
+
+    <button
+      mat-icon-button
+      type="button"
+      (click)="clearFilters()"
+      matTooltip="Limpiar filtros"
+    >
+      <mat-icon>clear_all</mat-icon>
+    </button>
+  </form>
+</mat-card>
+
+<mat-card class="table-card">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <div class="table-scroll">
+    <table mat-table [dataSource]="logs()" class="audit-table">
+      <ng-container matColumnDef="performedAt">
+        <th mat-header-cell *matHeaderCellDef>Fecha/hora</th>
+        <td mat-cell *matCellDef="let l">
+          {{ l.performedAt | date: 'yyyy-MM-dd HH:mm:ss' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Acción</th>
+        <td mat-cell *matCellDef="let l">
+          <mat-chip [color]="actionColor(l.action)" highlighted>{{ l.action }}</mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="entity">
+        <th mat-header-cell *matHeaderCellDef>Entidad</th>
+        <td mat-cell *matCellDef="let l">
+          @if (l.entityType) {
+            {{ l.entityType }}@if (l.entityId !== null && l.entityId !== undefined) {
+              <span class="entity-id">[{{ l.entityId }}]</span>
+            }
+          } @else {
+            —
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="performedBy">
+        <th mat-header-cell *matHeaderCellDef>Ejecutado por</th>
+        <td mat-cell *matCellDef="let l">
+          <strong>{{ l.performedBy }}</strong>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef>Detalles</th>
+        <td mat-cell *matCellDef="let l" class="details-cell">
+          <span [matTooltip]="l.details">{{ l.details || '—' }}</span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr *matNoDataRow>
+        <td [attr.colspan]="displayedColumns.length" class="no-data">
+          @if (loading()) {
+            <span>Cargando...</span>
+          } @else {
+            <span>No hay eventos que coincidan con los filtros.</span>
+          }
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator
+    [length]="totalElements()"
+    [pageSize]="20"
+    [pageSizeOptions]="[10, 20, 50, 100]"
+    (page)="onPage($event)"
+    showFirstLastButtons
+  ></mat-paginator>
+</mat-card>
