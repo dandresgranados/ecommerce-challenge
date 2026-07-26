@@ -23,7 +23,7 @@ const USER_KEY = 'auth_user';
  *   <li>Expone el usuario actual como {@code signal} para que los componentes
  *       reaccionen automáticamente a login/logout.</li>
  *   <li>Persiste token + usuario en {@code localStorage} para sobrevivir a un F5.</li>
- *   <li>El interceptor JWT lee el token via {@link AuthService.token}.</li>
+ *   <li>El interceptor JWT lee el token via {@link authService.token}.</li>
  * </ul>
  */
 @Injectable({ providedIn: 'root' })

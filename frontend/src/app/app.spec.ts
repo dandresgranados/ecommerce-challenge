@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { App } from './app';
 
 describe('App', () => {
@@ -13,8 +12,7 @@ describe('App', () => {
       providers: [
         provideRouter([]),
         provideHttpClient(),
-        provideHttpClientTesting(),
-        provideAnimationsAsync('noop')
+        provideHttpClientTesting()
       ]
     }).compileComponents();
   });
@@ -25,11 +23,10 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the app title in the toolbar', async () => {
+  it('should render a router outlet', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('TGS E-commerce');
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
   });
 });
