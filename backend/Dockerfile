@@ -19,7 +19,11 @@ COPY pom.xml .
 # de backend-ci.yml aparte).
 # Sin -q para ver los errores completos si algo falla en el CI.
 COPY src ./src
-RUN mvn -B -ntp clean package -DskipTests
+# Se saltan Checkstyle/SpotBugs en la imagen Docker porque:
+#   - Ya se ejecutan en el pipeline backend-ci.yml (job static-analysis).
+#   - Sus archivos de config (checkstyle.xml, spotbugs-exclude.xml) no
+#     se copian al contexto para mantener la imagen mínima.
+RUN mvn -B -ntp clean package -DskipTests -Dcheckstyle.skip -Dspotbugs.skip
 
 # --------- STAGE 2: RUNTIME ---------
 FROM eclipse-temurin:17-jre AS runtime

@@ -2,6 +2,7 @@ package com.tgs.ecommerce.product.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.tgs.ecommerce.config.JpaAuditingConfig;
 import com.tgs.ecommerce.product.domain.Category;
 import com.tgs.ecommerce.product.domain.Product;
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -26,6 +28,11 @@ import org.springframework.test.context.TestPropertySource;
  * repository que estamos testeando (aislamiento del test).
  */
 @DataJpaTest
+// @DataJpaTest solo carga la capa JPA; para que @CreatedDate / @LastModifiedDate
+// de AuditableEntity se rellenen automáticamente, hay que importar la config
+// de auditoría explícitamente. Sin esto, los tests fallan con
+// "NULL not allowed for column CREATED_AT".
+@Import(JpaAuditingConfig.class)
 @TestPropertySource(properties = {
     // El data.sql del perfil dev intenta insertar roles/products/etc que
     // aquí no queremos: cada test prepara sus propios datos con TestEntityManager.
