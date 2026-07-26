@@ -1,0 +1,33 @@
+# Excluye archivos que no deben copiarse al contexto de build de Docker.
+# Reduce el tamaño del contexto (node_modules pesa MUCHO) → builds mucho más rápidos.
+
+# Dependencias y artefactos
+node_modules/
+dist/
+.angular/
+coverage/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Git y logs
+.git/
+.gitignore
+*.log
+npm-debug.log*
+
+# Docs (no las necesita el runtime)
+*.md
+README*
+
+# Docker propio (evita recursión)
+Dockerfile
+.dockerignore
+
+# Configuración local
+.env
+.env.*.local

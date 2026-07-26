@@ -18,11 +18,17 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      # validate = compara tus @Entity con las tablas reales, falla si difieren.
-      # NO modifica el esquema. En prod las migraciones se hacen con
-      # Flyway o Liquibase (fuera del alcance de esta prueba).
-      ddl-auto: validate
+      # update = Hibernate crea/actualiza el schema al arrancar en base a
+      # las @Entity. Aceptable para el alcance de esta prueba técnica
+      # (en un proyecto real se usaría Flyway o Liquibase para versionar
+      # las migraciones y hacer un ddl-auto: validate).
+      ddl-auto: update
     show-sql: false
+    properties:
+      hibernate:
+        # Asegura que Hibernate serialice/deserialize fechas siempre en UTC,
+        # independientemente de la zona horaria del contenedor.
+        jdbc.time_zone: UTC
 
   # Sin consola H2 ni scripts de inicialización en prod.
   h2:

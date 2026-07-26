@@ -1,0 +1,81 @@
+# ============================================================
+# docker-compose.yml — TGS e-commerce
+# ------------------------------------------------------------
+# Levanta toda la stack en local con un solo comando:
+#     docker compose up --build
+#
+# Servicios:
+#   - postgres  : base de datos PostgreSQL 16 con volumen persistente
+#   - backend   : API Spring Boot 4 (perfil prod, JAR ejecutable)
+#   - frontend  : SPA Angular servida por nginx, proxya /api → backend
+#
+# Red por defecto: docker crea una bridge network donde los servicios
+# se ven entre sí por su nombre (ej: jdbc:postgresql://postgres:5432/...).
+# ============================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tgs-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-ecommerce}
+      POSTGRES_USER: ${DATABASE_USERNAME:-ecommerce}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+    volumes:
+      # Volumen nombrado → los datos sobreviven a "docker compose down".
+      # Para borrar de verdad: docker compose down -v
+      - postgres-data:/var/lib/postgresql/data
+    # No exponemos el puerto 5432 al host por defecto (más seguro).
+    # Descomenta si quieres conectarte con DBeaver/pgAdmin:
+    # ports:
+    #   - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-ecommerce} -d ${DATABASE_NAME:-ecommerce}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tgs-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${DATABASE_NAME:-ecommerce}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-ecommerce}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      JWT_SECRET: ${JWT_SECRET:-cambia-esto-en-produccion-usa-una-clave-de-256-bits-o-mas}
+      # Zona horaria del contenedor — coincide con jdbc.time_zone=UTC del prod.
+      TZ: UTC
+    # No exponemos 8080 al host: el frontend lo alcanza por la red interna.
+    # Descomenta si quieres pegarle con curl/Postman desde el host:
+    # ports:
+    #   - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tgs-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      # Punto de entrada único de la aplicación → http://localhost:8080
+      - "${FRONTEND_PORT:-8080}:80"
+
+volumes:
+  postgres-data:

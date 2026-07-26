@@ -1,0 +1,30 @@
+# Excluye archivos que no deben copiarse al contexto de build de Docker.
+# Reduce el tamaño del contexto enviado al daemon → builds más rápidos.
+
+# Artefactos de compilación
+target/
+*.class
+*.jar
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Git y logs
+.git/
+.gitignore
+*.log
+
+# Documentación (no la necesita el runtime)
+*.md
+README*
+
+# Docker propio (evita recursión)
+Dockerfile
+.dockerignore
+
+# Maven local
+.mvn/wrapper/maven-wrapper.jar
