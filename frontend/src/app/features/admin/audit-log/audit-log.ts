@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, DestroyRef, ViewChild, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  ViewChild,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,7 +29,7 @@ import { ApiError } from '../../../core/models/api-error.model';
 import {
   AuditAction,
   AuditLog,
-  AuditLogSearchCriteria
+  AuditLogSearchCriteria,
 } from '../../../core/models/audit-log.model';
 import { AuditLogService } from '../../../core/services/audit-log.service';
 import { PageQuery } from '../../../core/services/product.service';
@@ -46,12 +54,12 @@ import { PageQuery } from '../../../core/services/product.service';
     MatProgressBarModule,
     MatSelectModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './audit-log.html',
-  styleUrl: './audit-log.scss'
+  styleUrl: './audit-log.scss',
 })
-export class AuditLogComponent implements AfterViewInit {
+export class AuditLogComponent implements AfterViewInit, OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(AuditLogService);
   private readonly snackBar = inject(MatSnackBar);
@@ -68,7 +76,7 @@ export class AuditLogComponent implements AfterViewInit {
     'action',
     'entity',
     'performedBy',
-    'details'
+    'details',
   ];
 
   protected readonly actions: AuditAction[] = [
@@ -80,7 +88,7 @@ export class AuditLogComponent implements AfterViewInit {
     'DELETE',
     'PASSWORD_CHANGE',
     'PAY',
-    'CANCEL'
+    'CANCEL',
   ];
 
   protected readonly entityTypes = ['User', 'Product', 'Category', 'Order', 'DiscountWindow'];
@@ -91,7 +99,7 @@ export class AuditLogComponent implements AfterViewInit {
     entityId: [null as number | null],
     performedBy: [''],
     from: [''],
-    to: ['']
+    to: [''],
   });
 
   private paging: PageQuery = { page: 0, size: 20, sort: 'performedAt,desc' };
@@ -119,7 +127,7 @@ export class AuditLogComponent implements AfterViewInit {
       entityId: v.entityId ?? undefined,
       performedBy: v.performedBy || undefined,
       from: v.from ? new Date(v.from).toISOString() : undefined,
-      to: v.to ? new Date(v.to).toISOString() : undefined
+      to: v.to ? new Date(v.to).toISOString() : undefined,
     };
     this.service.search(criteria, this.paging).subscribe({
       next: (page) => {
@@ -130,12 +138,10 @@ export class AuditLogComponent implements AfterViewInit {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'Error al cargar auditoría',
-          'Cerrar',
-          { duration: 4000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'Error al cargar auditoría', 'Cerrar', {
+          duration: 4000,
+        });
+      },
     });
   }
 
@@ -151,7 +157,7 @@ export class AuditLogComponent implements AfterViewInit {
       entityId: null,
       performedBy: '',
       from: '',
-      to: ''
+      to: '',
     });
   }
 

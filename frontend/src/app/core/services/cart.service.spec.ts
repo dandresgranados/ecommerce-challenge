@@ -14,7 +14,7 @@ const p1: Product = {
   categoryName: 'Electrónica',
   stock: 5,
   createdAt: '',
-  updatedAt: ''
+  updatedAt: '',
 };
 
 const p2: Product = {
@@ -23,7 +23,7 @@ const p2: Product = {
   sku: 'LIB-001',
   name: 'Clean Code',
   price: 35,
-  stock: 3
+  stock: 3,
 };
 
 describe('CartService', () => {
@@ -94,8 +94,8 @@ describe('CartService', () => {
     localStorage.setItem(
       'cart_items',
       JSON.stringify([
-        { productId: 1, sku: 'X', name: 'X', unitPrice: 10, quantity: 3, maxStock: 5 }
-      ])
+        { productId: 1, sku: 'X', name: 'X', unitPrice: 10, quantity: 3, maxStock: 5 },
+      ]),
     );
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({});

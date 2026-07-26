@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -13,10 +13,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { ReportService } from '../../../core/services/report.service';
 import { Product } from '../../../core/models/product.model';
-import {
-  FrequentCustomer,
-  TopSellingProduct
-} from '../../../core/models/report.model';
+import { FrequentCustomer, TopSellingProduct } from '../../../core/models/report.model';
 import { ApiError } from '../../../core/models/api-error.model';
 
 /**
@@ -42,12 +39,12 @@ import { ApiError } from '../../../core/models/api-error.model';
     MatIconModule,
     MatProgressBarModule,
     MatSelectModule,
-    MatTableModule
+    MatTableModule,
   ],
   templateUrl: './reports-dashboard.html',
-  styleUrl: './reports-dashboard.scss'
+  styleUrl: './reports-dashboard.scss',
 })
-export class ReportsDashboardComponent {
+export class ReportsDashboardComponent implements OnInit {
   private readonly reportService = inject(ReportService);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -63,12 +60,12 @@ export class ReportsDashboardComponent {
 
   /** Máximo de ventas — usado para dimensionar las barras del top vendidos. */
   protected readonly maxSold = computed(() =>
-    this.topProducts().reduce((max, p) => Math.max(max, p.totalSold), 0)
+    this.topProducts().reduce((max, p) => Math.max(max, p.totalSold), 0),
   );
 
   /** Máximo de gasto — usado para las barras del top de clientes. */
   protected readonly maxSpent = computed(() =>
-    this.customers().reduce((max, c) => Math.max(max, c.totalSpent), 0)
+    this.customers().reduce((max, c) => Math.max(max, c.totalSpent), 0),
   );
 
   protected readonly topColumns = ['rank', 'product', 'totalSold', 'bar'];
@@ -96,7 +93,7 @@ export class ReportsDashboardComponent {
         this.activeProducts.set(list);
         this.loadingActive.set(false);
       },
-      error: (err) => this.handleError(err, 'productos activos', this.loadingActive)
+      error: (err) => this.handleError(err, 'productos activos', this.loadingActive),
     });
   }
 
@@ -107,7 +104,7 @@ export class ReportsDashboardComponent {
         this.topProducts.set(list);
         this.loadingTop.set(false);
       },
-      error: (err) => this.handleError(err, 'top vendidos', this.loadingTop)
+      error: (err) => this.handleError(err, 'top vendidos', this.loadingTop),
     });
   }
 
@@ -118,22 +115,20 @@ export class ReportsDashboardComponent {
         this.customers.set(list);
         this.loadingCustomers.set(false);
       },
-      error: (err) => this.handleError(err, 'clientes frecuentes', this.loadingCustomers)
+      error: (err) => this.handleError(err, 'clientes frecuentes', this.loadingCustomers),
     });
   }
 
   private handleError(
     err: HttpErrorResponse,
     label: string,
-    loadingSignal: { set: (v: boolean) => void }
+    loadingSignal: { set: (v: boolean) => void },
   ): void {
     loadingSignal.set(false);
     const apiError = err.error as ApiError | undefined;
-    this.snackBar.open(
-      apiError?.message ?? `No se pudo cargar el reporte de ${label}`,
-      'Cerrar',
-      { duration: 4000 }
-    );
+    this.snackBar.open(apiError?.message ?? `No se pudo cargar el reporte de ${label}`, 'Cerrar', {
+      duration: 4000,
+    });
   }
 
   /** Ancho de la barra en %, relativo al máximo. Al menos 4 % para visibilidad. */

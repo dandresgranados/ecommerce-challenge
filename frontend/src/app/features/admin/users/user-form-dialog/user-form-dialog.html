@@ -68,20 +68,13 @@
       <mat-checkbox formControlName="roleAdmin" color="primary">ADMIN</mat-checkbox>
     </div>
 
-    <mat-slide-toggle formControlName="active" color="primary">
-      Usuario activo
-    </mat-slide-toggle>
+    <mat-slide-toggle formControlName="active" color="primary"> Usuario activo </mat-slide-toggle>
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="cancel()" [disabled]="loading()">Cancelar</button>
-  <button
-    mat-flat-button
-    color="primary"
-    (click)="onSubmit()"
-    [disabled]="loading()"
-  >
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="loading()">
     @if (loading()) {
       <mat-spinner diameter="20"></mat-spinner>
     } @else {

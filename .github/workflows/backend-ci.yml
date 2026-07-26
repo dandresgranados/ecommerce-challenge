@@ -1,0 +1,114 @@
+# =====================================================================
+# CI del backend (Spring Boot 4 / Java 17)
+#
+# Se dispara en push a main y en cada pull request que modifique el
+# backend, el workflow o la config raíz.
+#
+# Jobs:
+#   1. build-and-test → compila, corre 24 tests unitarios, genera
+#      cobertura JaCoCo y publica los reportes como artefactos.
+#   2. static-analysis → SpotBugs + Checkstyle en paralelo con los tests.
+# =====================================================================
+name: Backend CI
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  workflow_dispatch: # permite lanzarlo manualmente desde la UI
+
+defaults:
+  run:
+    working-directory: ./backend
+
+concurrency:
+  # Cancela runs previos del mismo PR cuando llegan pushes nuevos.
+  group: backend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build, test, coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Compile + tests + JaCoCo coverage
+        run: ./mvnw -B -ntp verify
+
+      - name: Upload JaCoCo HTML report
+        if: always() # aunque los tests fallen, sube lo que haya
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jacoco-report
+          path: backend/target/site/jacoco/
+          retention-days: 14
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/*.jar
+          retention-days: 7
+
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Backend JUnit Tests
+          path: backend/target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: false
+
+  static-analysis:
+    name: SpotBugs + Checkstyle
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run Checkstyle
+        run: ./mvnw -B -ntp checkstyle:check
+
+      - name: Run SpotBugs
+        run: ./mvnw -B -ntp compile spotbugs:spotbugs
+
+      - name: Upload SpotBugs report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-spotbugs-report
+          path: backend/target/spotbugsXml.xml
+          retention-days: 14
+
+      - name: Upload Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-checkstyle-report
+          path: backend/target/checkstyle-result.xml
+          retention-days: 14

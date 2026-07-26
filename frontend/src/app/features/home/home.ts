@@ -25,7 +25,7 @@ interface HomeTile {
   selector: 'app-home',
   imports: [CommonModule, RouterLink, MatCardModule, MatIconModule, MatButtonModule],
   templateUrl: './home.html',
-  styleUrl: './home.scss'
+  styleUrl: './home.scss',
 })
 export class HomeComponent {
   protected readonly auth = inject(AuthService);
@@ -36,14 +36,14 @@ export class HomeComponent {
       description: 'Explora el catálogo y busca por nombre, categoría o precio',
       icon: 'inventory_2',
       route: '/products',
-      color: 'primary'
+      color: 'primary',
     },
     {
       title: 'Mis órdenes',
       description: 'Crea nuevas órdenes y consulta tu historial de compras',
       icon: 'receipt_long',
       route: '/orders',
-      color: 'primary'
+      color: 'primary',
     },
     {
       title: 'Reportes',
@@ -51,7 +51,7 @@ export class HomeComponent {
       icon: 'bar_chart',
       route: '/reports',
       color: 'accent',
-      roles: ['ADMIN']
+      roles: ['ADMIN'],
     },
     {
       title: 'Usuarios',
@@ -59,7 +59,7 @@ export class HomeComponent {
       icon: 'group',
       route: '/admin/users',
       color: 'accent',
-      roles: ['ADMIN']
+      roles: ['ADMIN'],
     },
     {
       title: 'Ventanas de descuento',
@@ -67,7 +67,7 @@ export class HomeComponent {
       icon: 'local_offer',
       route: '/admin/discount-windows',
       color: 'accent',
-      roles: ['ADMIN']
+      roles: ['ADMIN'],
     },
     {
       title: 'Auditoría',
@@ -75,11 +75,11 @@ export class HomeComponent {
       icon: 'shield',
       route: '/admin/audit',
       color: 'accent',
-      roles: ['ADMIN']
-    }
+      roles: ['ADMIN'],
+    },
   ];
 
   protected readonly tiles = computed<HomeTile[]>(() =>
-    this.allTiles.filter((t) => !t.roles || this.auth.hasRole(...t.roles))
+    this.allTiles.filter((t) => !t.roles || this.auth.hasRole(...t.roles)),
   );
 }

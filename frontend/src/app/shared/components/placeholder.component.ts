@@ -41,8 +41,8 @@ import { MatIconModule } from '@angular/material/icon';
         line-height: 1.6;
         color: var(--mat-sys-on-surface-variant);
       }
-    `
-  ]
+    `,
+  ],
 })
 export class PlaceholderComponent {
   readonly title = input.required<string>();

@@ -7,7 +7,7 @@ import {
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
-  MatDialogTitle
+  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,7 +37,7 @@ export interface CategoryFormDialogData {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   template: `
     <h2 mat-dialog-title>
@@ -48,7 +48,7 @@ export interface CategoryFormDialogData {
       <form [formGroup]="form" class="cat-form">
         <mat-form-field appearance="outline">
           <mat-label>Nombre</mat-label>
-          <input matInput formControlName="name" autofocus />
+          <input matInput formControlName="name" />
           @if (form.controls.name.hasError('required') && form.controls.name.touched) {
             <mat-error>El nombre es obligatorio</mat-error>
           }
@@ -64,12 +64,7 @@ export interface CategoryFormDialogData {
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="cancel()" [disabled]="loading()">Cancelar</button>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="onSubmit()"
-        [disabled]="loading()"
-      >
+      <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="loading()">
         @if (loading()) {
           <mat-spinner diameter="20"></mat-spinner>
         } @else {
@@ -93,17 +88,19 @@ export interface CategoryFormDialogData {
         padding-top: 0.5rem;
       }
       @media (max-width: 500px) {
-        .cat-form { min-width: unset; }
+        .cat-form {
+          min-width: unset;
+        }
       }
-    `
-  ]
+    `,
+  ],
 })
 export class CategoryFormDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly categoryService = inject(CategoryService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialogRef = inject(
-    MatDialogRef<CategoryFormDialogComponent, Category | undefined>
+    MatDialogRef<CategoryFormDialogComponent, Category | undefined>,
   );
 
   protected readonly data = inject<CategoryFormDialogData>(MAT_DIALOG_DATA);
@@ -113,12 +110,9 @@ export class CategoryFormDialogComponent {
   protected readonly form = this.fb.nonNullable.group({
     name: [
       this.data.category?.name ?? '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(64)]
+      [Validators.required, Validators.minLength(2), Validators.maxLength(64)],
     ],
-    description: [
-      this.data.category?.description ?? '',
-      [Validators.maxLength(255)]
-    ]
+    description: [this.data.category?.description ?? '', [Validators.maxLength(255)]],
   });
 
   onSubmit(): void {
@@ -130,7 +124,7 @@ export class CategoryFormDialogComponent {
     const values = this.form.getRawValue();
     const request: CategoryRequest = {
       name: values.name,
-      description: values.description || undefined
+      description: values.description || undefined,
     };
 
     const request$ = this.isEdit
@@ -139,22 +133,16 @@ export class CategoryFormDialogComponent {
 
     request$.subscribe({
       next: (cat) => {
-        this.snackBar.open(
-          this.isEdit ? 'Categoría actualizada' : 'Categoría creada',
-          'Cerrar',
-          { duration: 3000 }
-        );
+        this.snackBar.open(this.isEdit ? 'Categoría actualizada' : 'Categoría creada', 'Cerrar', {
+          duration: 3000,
+        });
         this.dialogRef.close(cat);
       },
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'No se pudo guardar',
-          'Cerrar',
-          { duration: 5000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'No se pudo guardar', 'Cerrar', { duration: 5000 });
+      },
     });
   }
 

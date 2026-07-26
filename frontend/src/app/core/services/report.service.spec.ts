@@ -11,7 +11,7 @@ describe('ReportService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()]
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(ReportService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -29,7 +29,7 @@ describe('ReportService', () => {
   it('GET /reports/products/top-selling with default limit=5', () => {
     service.topSellingProducts().subscribe();
     const req = httpMock.expectOne(
-      (r) => r.url === `${environment.apiUrl}/reports/products/top-selling`
+      (r) => r.url === `${environment.apiUrl}/reports/products/top-selling`,
     );
     expect(req.request.method).toBe('GET');
     expect(req.request.params.get('limit')).toBe('5');
@@ -39,7 +39,7 @@ describe('ReportService', () => {
   it('GET /reports/products/top-selling with custom limit', () => {
     service.topSellingProducts(20).subscribe();
     const req = httpMock.expectOne(
-      (r) => r.url === `${environment.apiUrl}/reports/products/top-selling`
+      (r) => r.url === `${environment.apiUrl}/reports/products/top-selling`,
     );
     expect(req.request.params.get('limit')).toBe('20');
     req.flush([]);
@@ -48,7 +48,7 @@ describe('ReportService', () => {
   it('GET /reports/customers/frequent with default limit=5', () => {
     service.frequentCustomers().subscribe();
     const req = httpMock.expectOne(
-      (r) => r.url === `${environment.apiUrl}/reports/customers/frequent`
+      (r) => r.url === `${environment.apiUrl}/reports/customers/frequent`,
     );
     expect(req.request.params.get('limit')).toBe('5');
     req.flush([]);

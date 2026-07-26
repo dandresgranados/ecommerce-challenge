@@ -32,9 +32,7 @@
         } @else {
           <div class="kpi-value">{{ activeProducts().length }}</div>
         }
-        <div class="kpi-hint">
-          Total de productos disponibles para venta
-        </div>
+        <div class="kpi-hint">Total de productos disponibles para venta</div>
       </div>
     </mat-card-content>
   </mat-card>
@@ -127,7 +125,7 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="topColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: topColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: topColumns"></tr>
 
         <tr *matNoDataRow>
           <td [attr.colspan]="topColumns.length" class="no-data">
@@ -183,7 +181,7 @@
           <th mat-header-cell *matHeaderCellDef class="right">Gasto total</th>
           <td mat-cell *matCellDef="let c" class="right">
             <div class="spent-cell">
-              <strong>{{ c.totalSpent | currency: 'USD':'symbol':'1.2-2' }}</strong>
+              <strong>{{ c.totalSpent | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
               <div class="bar-track thin">
                 <div
                   class="bar-fill accent-bar"
@@ -195,7 +193,7 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="customerColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: customerColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: customerColumns"></tr>
 
         <tr *matNoDataRow>
           <td [attr.colspan]="customerColumns.length" class="no-data">

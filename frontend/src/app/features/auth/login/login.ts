@@ -32,10 +32,10 @@ import { ApiError } from '../../../core/models/api-error.model';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './login.html',
-  styleUrl: './login.scss'
+  styleUrl: './login.scss',
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
@@ -49,7 +49,7 @@ export class LoginComponent {
 
   protected readonly form = this.fb.nonNullable.group({
     username: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(4)]]
+    password: ['', [Validators.required, Validators.minLength(4)]],
   });
 
   onSubmit(): void {
@@ -68,7 +68,7 @@ export class LoginComponent {
         const apiError = err.error as ApiError | undefined;
         const message = apiError?.message ?? 'Credenciales inválidas';
         this.snackBar.open(message, 'Cerrar', { duration: 4000 });
-      }
+      },
     });
   }
 }

@@ -24,18 +24,12 @@ export class ReportService {
   /** Top N productos por unidades totales vendidas (default 5). */
   topSellingProducts(limit = 5): Observable<TopSellingProduct[]> {
     const params = new HttpParams().set('limit', String(limit));
-    return this.http.get<TopSellingProduct[]>(
-      `${this.baseUrl}/products/top-selling`,
-      { params }
-    );
+    return this.http.get<TopSellingProduct[]>(`${this.baseUrl}/products/top-selling`, { params });
   }
 
   /** Top N clientes por número de órdenes (default 5). */
   frequentCustomers(limit = 5): Observable<FrequentCustomer[]> {
     const params = new HttpParams().set('limit', String(limit));
-    return this.http.get<FrequentCustomer[]>(
-      `${this.baseUrl}/customers/frequent`,
-      { params }
-    );
+    return this.http.get<FrequentCustomer[]>(`${this.baseUrl}/customers/frequent`, { params });
   }
 }

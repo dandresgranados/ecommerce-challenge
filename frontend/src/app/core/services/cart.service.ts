@@ -36,13 +36,11 @@ export class CartService {
   readonly items = this._items.asReadonly();
 
   /** Suma de cantidades — para el badge del toolbar. */
-  readonly itemCount = computed(() =>
-    this._items().reduce((acc, item) => acc + item.quantity, 0)
-  );
+  readonly itemCount = computed(() => this._items().reduce((acc, item) => acc + item.quantity, 0));
 
   /** Suma monetaria sin descuentos aplicados (los descuentos los calcula el backend). */
   readonly subtotal = computed(() =>
-    this._items().reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+    this._items().reduce((acc, item) => acc + item.unitPrice * item.quantity, 0),
   );
 
   /** {@code true} si el carrito no tiene ninguna línea. */
@@ -61,9 +59,7 @@ export class CartService {
       const newQty = existing.quantity + quantity;
       if (newQty > stock) return false;
       this._items.set(
-        items.map((it) =>
-          it.productId === product.id ? { ...it, quantity: newQty } : it
-        )
+        items.map((it) => (it.productId === product.id ? { ...it, quantity: newQty } : it)),
       );
     } else {
       if (quantity > stock) return false;
@@ -75,8 +71,8 @@ export class CartService {
           name: product.name,
           unitPrice: product.price,
           quantity,
-          maxStock: stock
-        }
+          maxStock: stock,
+        },
       ]);
     }
     this.persist();
@@ -91,10 +87,8 @@ export class CartService {
     }
     this._items.set(
       this._items().map((it) =>
-        it.productId === productId
-          ? { ...it, quantity: Math.min(quantity, it.maxStock) }
-          : it
-      )
+        it.productId === productId ? { ...it, quantity: Math.min(quantity, it.maxStock) } : it,
+      ),
     );
     this.persist();
   }

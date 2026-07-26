@@ -8,7 +8,7 @@ import {
   Product,
   ProductRequest,
   ProductSearchCriteria,
-  ProductUpdateRequest
+  ProductUpdateRequest,
 } from '../models/product.model';
 
 /** Parámetros de paginación estándar de Spring Data. */
@@ -35,7 +35,7 @@ export class ProductService {
    */
   search(
     criteria: ProductSearchCriteria = {},
-    paging: PageQuery = {}
+    paging: PageQuery = {},
   ): Observable<PagedResponse<Product>> {
     let params = new HttpParams();
 

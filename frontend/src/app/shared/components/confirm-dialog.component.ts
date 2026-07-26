@@ -4,7 +4,7 @@ import {
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
-  MatDialogTitle
+  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,13 +28,7 @@ export interface ConfirmDialogData {
  */
 @Component({
   selector: 'app-confirm-dialog',
-  imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatButtonModule,
-    MatIconModule
-  ],
+  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, MatIconModule],
   template: `
     <h2 mat-dialog-title>
       @if (data.icon) {
@@ -70,8 +64,8 @@ export interface ConfirmDialogData {
         margin: 0;
         line-height: 1.5;
       }
-    `
-  ]
+    `,
+  ],
 })
 export class ConfirmDialogComponent {
   protected readonly data = inject<ConfirmDialogData>(MAT_DIALOG_DATA);

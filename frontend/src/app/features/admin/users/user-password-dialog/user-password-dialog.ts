@@ -7,7 +7,7 @@ import {
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
-  MatDialogTitle
+  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,7 +37,7 @@ import { UserService } from '../../../../core/services/user.service';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   template: `
     <h2 mat-dialog-title>
@@ -62,10 +62,14 @@ import { UserService } from '../../../../core/services/user.service';
           >
             <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          @if (form.controls.newPassword.hasError('required') && form.controls.newPassword.touched) {
+          @if (
+            form.controls.newPassword.hasError('required') && form.controls.newPassword.touched
+          ) {
             <mat-error>Requerida</mat-error>
           }
-          @if (form.controls.newPassword.hasError('minlength') && form.controls.newPassword.touched) {
+          @if (
+            form.controls.newPassword.hasError('minlength') && form.controls.newPassword.touched
+          ) {
             <mat-error>Mínimo 6 caracteres</mat-error>
           }
         </mat-form-field>
@@ -73,12 +77,7 @@ import { UserService } from '../../../../core/services/user.service';
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="cancel()" [disabled]="loading()">Cancelar</button>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="onSubmit()"
-        [disabled]="loading()"
-      >
+      <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="loading()">
         @if (loading()) {
           <mat-spinner diameter="20"></mat-spinner>
         } @else {
@@ -98,23 +97,21 @@ import { UserService } from '../../../../core/services/user.service';
         min-width: 380px;
         padding-top: 0.5rem;
       }
-    `
-  ]
+    `,
+  ],
 })
 export class UserPasswordDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly dialogRef = inject(
-    MatDialogRef<UserPasswordDialogComponent, boolean>
-  );
+  private readonly dialogRef = inject(MatDialogRef<UserPasswordDialogComponent, boolean>);
 
   protected readonly data = inject<User>(MAT_DIALOG_DATA);
   protected readonly loading = signal(false);
   protected readonly hidePassword = signal(true);
 
   protected readonly form = this.fb.nonNullable.group({
-    newPassword: ['', [Validators.required, Validators.minLength(6)]]
+    newPassword: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   onSubmit(): void {
@@ -124,22 +121,18 @@ export class UserPasswordDialogComponent {
       .changePassword(this.data.id, { newPassword: this.form.controls.newPassword.value })
       .subscribe({
         next: () => {
-          this.snackBar.open(
-            `Contraseña de ${this.data.username} actualizada`,
-            'Cerrar',
-            { duration: 3000 }
-          );
+          this.snackBar.open(`Contraseña de ${this.data.username} actualizada`, 'Cerrar', {
+            duration: 3000,
+          });
           this.dialogRef.close(true);
         },
         error: (err: HttpErrorResponse) => {
           this.loading.set(false);
           const apiError = err.error as ApiError | undefined;
-          this.snackBar.open(
-            apiError?.message ?? 'No se pudo cambiar la contraseña',
-            'Cerrar',
-            { duration: 5000 }
-          );
-        }
+          this.snackBar.open(apiError?.message ?? 'No se pudo cambiar la contraseña', 'Cerrar', {
+            duration: 5000,
+          });
+        },
       });
   }
 

@@ -7,7 +7,7 @@ import {
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
-  MatDialogTitle
+  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -20,11 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ApiError } from '../../../../core/models/api-error.model';
 import { Role } from '../../../../core/models/role.model';
-import {
-  User,
-  UserCreateRequest,
-  UserUpdateRequest
-} from '../../../../core/models/user.model';
+import { User, UserCreateRequest, UserUpdateRequest } from '../../../../core/models/user.model';
 import { UserService } from '../../../../core/services/user.service';
 
 export interface UserFormDialogData {
@@ -51,18 +47,16 @@ export interface UserFormDialogData {
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
   ],
   templateUrl: './user-form-dialog.html',
-  styleUrl: './user-form-dialog.scss'
+  styleUrl: './user-form-dialog.scss',
 })
 export class UserFormDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly dialogRef = inject(
-    MatDialogRef<UserFormDialogComponent, User | undefined>
-  );
+  private readonly dialogRef = inject(MatDialogRef<UserFormDialogComponent, User | undefined>);
 
   protected readonly data = inject<UserFormDialogData>(MAT_DIALOG_DATA);
   protected readonly loading = signal(false);
@@ -72,17 +66,17 @@ export class UserFormDialogComponent {
   protected readonly form = this.fb.nonNullable.group({
     username: [
       { value: this.data.user?.username ?? '', disabled: this.isEdit },
-      [Validators.required, Validators.minLength(3), Validators.maxLength(64)]
+      [Validators.required, Validators.minLength(3), Validators.maxLength(64)],
     ],
     email: [
       this.data.user?.email ?? '',
-      [Validators.required, Validators.email, Validators.maxLength(128)]
+      [Validators.required, Validators.email, Validators.maxLength(128)],
     ],
     password: ['', this.isEdit ? [] : [Validators.required, Validators.minLength(6)]],
     fullName: [this.data.user?.fullName ?? '', [Validators.maxLength(128)]],
     active: [this.data.user?.active ?? true],
     roleAdmin: [this.data.user?.roles.includes('ADMIN') ?? false],
-    roleUser: [this.data.user?.roles.includes('USER') ?? true]
+    roleUser: [this.data.user?.roles.includes('USER') ?? true],
   });
 
   onSubmit(): void {
@@ -107,23 +101,21 @@ export class UserFormDialogComponent {
           email: values.email,
           fullName: values.fullName || undefined,
           active: values.active,
-          roles
+          roles,
         } satisfies UserUpdateRequest)
       : this.userService.create({
           username: values.username,
           email: values.email,
           password: values.password,
           fullName: values.fullName || undefined,
-          roles
+          roles,
         } satisfies UserCreateRequest);
 
     request$.subscribe({
       next: (user) => {
-        this.snackBar.open(
-          this.isEdit ? 'Usuario actualizado' : 'Usuario creado',
-          'Cerrar',
-          { duration: 3000 }
-        );
+        this.snackBar.open(this.isEdit ? 'Usuario actualizado' : 'Usuario creado', 'Cerrar', {
+          duration: 3000,
+        });
         this.dialogRef.close(user);
       },
       error: (err: HttpErrorResponse) => {
@@ -134,7 +126,7 @@ export class UserFormDialogComponent {
           apiError?.message ??
           'No se pudo guardar el usuario';
         this.snackBar.open(message, 'Cerrar', { duration: 5000 });
-      }
+      },
     });
   }
 

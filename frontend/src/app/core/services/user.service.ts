@@ -8,7 +8,7 @@ import {
   PasswordChangeRequest,
   User,
   UserCreateRequest,
-  UserUpdateRequest
+  UserUpdateRequest,
 } from '../models/user.model';
 import { PageQuery } from './product.service';
 

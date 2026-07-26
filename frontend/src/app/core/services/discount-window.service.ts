@@ -3,10 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import {
-  DiscountWindow,
-  DiscountWindowRequest
-} from '../models/discount-window.model';
+import { DiscountWindow, DiscountWindowRequest } from '../models/discount-window.model';
 
 /**
  * Cliente HTTP para {@code /api/discount-windows}. Solo admin puede

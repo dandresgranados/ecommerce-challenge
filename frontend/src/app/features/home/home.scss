@@ -35,7 +35,9 @@
 .tile {
   height: 100%;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   border: 1px solid var(--mat-sys-outline-variant);
 
   &:hover {

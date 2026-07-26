@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,11 +15,11 @@ import { Category } from '../../../core/models/category.model';
 import { CategoryService } from '../../../core/services/category.service';
 import {
   ConfirmDialogComponent,
-  ConfirmDialogData
+  ConfirmDialogData,
 } from '../../../shared/components/confirm-dialog.component';
 import {
   CategoryFormDialogComponent,
-  CategoryFormDialogData
+  CategoryFormDialogData,
 } from './category-form-dialog/category-form-dialog';
 
 @Component({
@@ -31,12 +31,12 @@ import {
     MatIconModule,
     MatProgressBarModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './categories-management.html',
-  styleUrl: './categories-management.scss'
+  styleUrl: './categories-management.scss',
 })
-export class CategoriesManagementComponent {
+export class CategoriesManagementComponent implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -59,19 +59,17 @@ export class CategoriesManagementComponent {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'Error al cargar categorías',
-          'Cerrar',
-          { duration: 4000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'Error al cargar categorías', 'Cerrar', {
+          duration: 4000,
+        });
+      },
     });
   }
 
   openCreate(): void {
     const ref = this.dialog.open<CategoryFormDialogComponent, CategoryFormDialogData, Category>(
       CategoryFormDialogComponent,
-      { data: { category: null } }
+      { data: { category: null } },
     );
     ref.afterClosed().subscribe((c) => {
       if (c) this.reload();
@@ -81,7 +79,7 @@ export class CategoriesManagementComponent {
   openEdit(category: Category): void {
     const ref = this.dialog.open<CategoryFormDialogComponent, CategoryFormDialogData, Category>(
       CategoryFormDialogComponent,
-      { data: { category } }
+      { data: { category } },
     );
     ref.afterClosed().subscribe((c) => {
       if (c) this.reload();
@@ -97,9 +95,9 @@ export class CategoriesManagementComponent {
           message: `¿Seguro que deseas eliminar la categoría "${category.name}"? Puede fallar si tiene productos asociados.`,
           confirmLabel: 'Eliminar',
           color: 'warn',
-          icon: 'delete_forever'
-        }
-      }
+          icon: 'delete_forever',
+        },
+      },
     );
     ref.afterClosed().subscribe((ok) => {
       if (!ok) return;
@@ -110,12 +108,10 @@ export class CategoriesManagementComponent {
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiError | undefined;
-          this.snackBar.open(
-            apiError?.message ?? 'No se pudo eliminar',
-            'Cerrar',
-            { duration: 4000 }
-          );
-        }
+          this.snackBar.open(apiError?.message ?? 'No se pudo eliminar', 'Cerrar', {
+            duration: 4000,
+          });
+        },
       });
     });
   }

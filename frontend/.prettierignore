@@ -1,0 +1,9 @@
+# Rutas que Prettier NO debe formatear.
+dist/
+.angular/
+coverage/
+node_modules/
+out-tsc/
+*.min.js
+*.min.css
+package-lock.json

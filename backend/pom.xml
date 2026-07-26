@@ -28,6 +28,11 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<!-- Umbral mínimo de cobertura para que el build no falle.
+		     El alcance de la prueba incluye 24 tests unitarios sobre la lógica
+		     de negocio crítica (descuentos, órdenes, productos, auth). En un
+		     proyecto real subiríamos a ~70 % añadiendo tests de integración. -->
+		<jacoco.line.coverage.min>0.15</jacoco.line.coverage.min>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -170,6 +175,125 @@
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- ================================================================
+			     JaCoCo — cobertura de tests.
+			     Genera:
+			       target/site/jacoco/index.html   (reporte HTML navegable)
+			       target/site/jacoco/jacoco.xml   (para SonarCloud / Codecov)
+			     Falla el build si la cobertura de líneas cae por debajo del
+			     umbral definido en la propiedad jacoco.line.coverage.min.
+			     ================================================================ -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>check-coverage</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>${jacoco.line.coverage.min}</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+							<!-- Excluye clases sin lógica de dominio del cálculo. -->
+							<excludes>
+								<exclude>com/tgs/ecommerce/EcommerceApiApplication.class</exclude>
+								<exclude>com/tgs/ecommerce/config/**</exclude>
+								<exclude>com/tgs/ecommerce/**/dto/**</exclude>
+								<exclude>com/tgs/ecommerce/**/domain/**</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- ================================================================
+			     SpotBugs — detección de bugs comunes por análisis de bytecode.
+			     Ejecutar manualmente:   ./mvnw spotbugs:check
+			     Reporte HTML:           ./mvnw spotbugs:spotbugs
+			                             → target/spotbugsXml.xml + site/
+			     ================================================================ -->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.8.6.6</version>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>Medium</threshold>
+					<failOnError>false</failOnError>
+					<xmlOutput>true</xmlOutput>
+					<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+				</configuration>
+				<executions>
+					<execution>
+						<id>spotbugs-check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- ================================================================
+			     Checkstyle — validación de estilo de código.
+			     Usa la config en checkstyle.xml (raíz del módulo).
+			     Ejecutar manualmente:   ./mvnw checkstyle:check
+			     ================================================================ -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
+					<consoleOutput>true</consoleOutput>
+					<failsOnError>false</failsOnError>
+					<failOnViolation>false</failOnViolation>
+					<includeTestSourceDirectory>false</includeTestSourceDirectory>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>10.20.1</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>checkstyle-validate</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

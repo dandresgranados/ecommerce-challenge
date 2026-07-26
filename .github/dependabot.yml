@@ -1,0 +1,52 @@
+# =====================================================================
+# Dependabot — actualizaciones automáticas de dependencias.
+#
+# Cada semana revisa si hay nuevas versiones de las dependencias y
+# abre un PR con el bump. Reduce drásticamente el trabajo de mantener
+# el proyecto al día en seguridad.
+# =====================================================================
+version: 2
+updates:
+  # Backend (Maven)
+  - package-ecosystem: maven
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    labels: [dependencies, backend]
+    commit-message:
+      prefix: chore(deps-backend)
+
+  # Frontend (npm)
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    labels: [dependencies, frontend]
+    commit-message:
+      prefix: chore(deps-frontend)
+    # Agrupa updates menores de Angular en un solo PR (menos ruido).
+    groups:
+      angular:
+        patterns:
+          - '@angular/*'
+          - '@angular-eslint/*'
+          - 'angular-eslint'
+      material:
+        patterns:
+          - '@angular/material'
+          - '@angular/cdk'
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels: [dependencies, ci]
+    commit-message:
+      prefix: chore(deps-ci)

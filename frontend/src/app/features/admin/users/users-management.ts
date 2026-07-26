@@ -19,12 +19,9 @@ import { ApiError } from '../../../core/models/api-error.model';
 import { User } from '../../../core/models/user.model';
 import {
   ConfirmDialogComponent,
-  ConfirmDialogData
+  ConfirmDialogData,
 } from '../../../shared/components/confirm-dialog.component';
-import {
-  UserFormDialogComponent,
-  UserFormDialogData
-} from './user-form-dialog/user-form-dialog';
+import { UserFormDialogComponent, UserFormDialogData } from './user-form-dialog/user-form-dialog';
 import { UserPasswordDialogComponent } from './user-password-dialog/user-password-dialog';
 
 /**
@@ -44,10 +41,10 @@ import { UserPasswordDialogComponent } from './user-password-dialog/user-passwor
     MatPaginatorModule,
     MatProgressBarModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './users-management.html',
-  styleUrl: './users-management.scss'
+  styleUrl: './users-management.scss',
 })
 export class UsersManagementComponent implements AfterViewInit {
   private readonly userService = inject(UserService);
@@ -67,7 +64,7 @@ export class UsersManagementComponent implements AfterViewInit {
     'fullName',
     'roles',
     'active',
-    'actions'
+    'actions',
   ];
 
   private paging: PageQuery = { page: 0, size: 10, sort: 'username,asc' };
@@ -87,12 +84,10 @@ export class UsersManagementComponent implements AfterViewInit {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'Error al cargar usuarios',
-          'Cerrar',
-          { duration: 4000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'Error al cargar usuarios', 'Cerrar', {
+          duration: 4000,
+        });
+      },
     });
   }
 
@@ -104,7 +99,7 @@ export class UsersManagementComponent implements AfterViewInit {
   openCreate(): void {
     const ref = this.dialog.open<UserFormDialogComponent, UserFormDialogData, User>(
       UserFormDialogComponent,
-      { data: { user: null }, width: '460px' }
+      { data: { user: null }, width: '460px' },
     );
     ref.afterClosed().subscribe((u) => {
       if (u) this.reload();
@@ -114,7 +109,7 @@ export class UsersManagementComponent implements AfterViewInit {
   openEdit(user: User): void {
     const ref = this.dialog.open<UserFormDialogComponent, UserFormDialogData, User>(
       UserFormDialogComponent,
-      { data: { user }, width: '460px' }
+      { data: { user }, width: '460px' },
     );
     ref.afterClosed().subscribe((u) => {
       if (u) this.reload();
@@ -132,7 +127,7 @@ export class UsersManagementComponent implements AfterViewInit {
   confirmDelete(user: User): void {
     if (this.isSelf(user)) {
       this.snackBar.open('No puedes eliminar tu propio usuario', 'Cerrar', {
-        duration: 3000
+        duration: 3000,
       });
       return;
     }
@@ -144,9 +139,9 @@ export class UsersManagementComponent implements AfterViewInit {
           message: `¿Seguro que deseas eliminar (desactivar) al usuario "${user.username}"?`,
           confirmLabel: 'Eliminar',
           color: 'warn',
-          icon: 'person_remove'
-        }
-      }
+          icon: 'person_remove',
+        },
+      },
     );
     ref.afterClosed().subscribe((ok) => {
       if (!ok) return;
@@ -157,12 +152,10 @@ export class UsersManagementComponent implements AfterViewInit {
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiError | undefined;
-          this.snackBar.open(
-            apiError?.message ?? 'No se pudo eliminar',
-            'Cerrar',
-            { duration: 4000 }
-          );
-        }
+          this.snackBar.open(apiError?.message ?? 'No se pudo eliminar', 'Cerrar', {
+            duration: 4000,
+          });
+        },
       });
     });
   }

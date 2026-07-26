@@ -3,10 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import {
-  AuditLog,
-  AuditLogSearchCriteria
-} from '../models/audit-log.model';
+import { AuditLog, AuditLogSearchCriteria } from '../models/audit-log.model';
 import { PagedResponse } from '../models/page.model';
 import { PageQuery } from './product.service';
 
@@ -23,7 +20,7 @@ export class AuditLogService {
 
   search(
     criteria: AuditLogSearchCriteria = {},
-    paging: PageQuery = {}
+    paging: PageQuery = {},
   ): Observable<PagedResponse<AuditLog>> {
     let params = new HttpParams();
 

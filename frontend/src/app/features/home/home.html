@@ -1,12 +1,6 @@
 <section class="hero">
-  <h1>
-    Bienvenido{{
-      auth.currentUser()?.fullName ? ', ' + auth.currentUser()?.fullName : ''
-    }}
-  </h1>
-  <p class="hero-subtitle">
-    Panel principal · Roles: {{ auth.currentUser()?.roles?.join(' · ') }}
-  </p>
+  <h1>Bienvenido{{ auth.currentUser()?.fullName ? ', ' + auth.currentUser()?.fullName : '' }}</h1>
+  <p class="hero-subtitle">Panel principal · Roles: {{ auth.currentUser()?.roles?.join(' · ') }}</p>
 </section>
 
 <section class="tiles-grid">

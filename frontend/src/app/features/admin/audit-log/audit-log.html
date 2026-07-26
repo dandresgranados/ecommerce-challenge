@@ -47,12 +47,7 @@
       <input matInput type="datetime-local" formControlName="to" />
     </mat-form-field>
 
-    <button
-      mat-icon-button
-      type="button"
-      (click)="clearFilters()"
-      matTooltip="Limpiar filtros"
-    >
+    <button mat-icon-button type="button" (click)="clearFilters()" matTooltip="Limpiar filtros">
       <mat-icon>clear_all</mat-icon>
     </button>
   </form>
@@ -83,7 +78,8 @@
         <th mat-header-cell *matHeaderCellDef>Entidad</th>
         <td mat-cell *matCellDef="let l">
           @if (l.entityType) {
-            {{ l.entityType }}@if (l.entityId !== null && l.entityId !== undefined) {
+            {{ l.entityType }}
+            @if (l.entityId !== null && l.entityId !== undefined) {
               <span class="entity-id">[{{ l.entityId }}]</span>
             }
           } @else {
@@ -107,7 +103,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
       <tr *matNoDataRow>
         <td [attr.colspan]="displayedColumns.length" class="no-data">

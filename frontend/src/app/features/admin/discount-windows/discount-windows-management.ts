@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -12,18 +12,15 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ApiError } from '../../../core/models/api-error.model';
-import {
-  DiscountWindow,
-  DiscountWindowType
-} from '../../../core/models/discount-window.model';
+import { DiscountWindow, DiscountWindowType } from '../../../core/models/discount-window.model';
 import { DiscountWindowService } from '../../../core/services/discount-window.service';
 import {
   ConfirmDialogComponent,
-  ConfirmDialogData
+  ConfirmDialogData,
 } from '../../../shared/components/confirm-dialog.component';
 import {
   DiscountWindowFormDialogComponent,
-  DiscountWindowFormDialogData
+  DiscountWindowFormDialogData,
 } from './discount-window-form-dialog/discount-window-form-dialog';
 
 @Component({
@@ -36,12 +33,12 @@ import {
     MatIconModule,
     MatProgressBarModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './discount-windows-management.html',
-  styleUrl: './discount-windows-management.scss'
+  styleUrl: './discount-windows-management.scss',
 })
-export class DiscountWindowsManagementComponent {
+export class DiscountWindowsManagementComponent implements OnInit {
   private readonly service = inject(DiscountWindowService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -55,14 +52,14 @@ export class DiscountWindowsManagementComponent {
     'startAt',
     'endAt',
     'status',
-    'actions'
+    'actions',
   ];
 
   /** Cuenta cuántas ventanas están activas Y vigentes ahora. */
   protected readonly currentlyActive = computed(() => {
     const now = new Date();
     return this.windows().filter(
-      (w) => w.active && new Date(w.startAt) <= now && now <= new Date(w.endAt)
+      (w) => w.active && new Date(w.startAt) <= now && now <= new Date(w.endAt),
     ).length;
   });
 
@@ -80,12 +77,10 @@ export class DiscountWindowsManagementComponent {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'Error al cargar ventanas',
-          'Cerrar',
-          { duration: 4000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'Error al cargar ventanas', 'Cerrar', {
+          duration: 4000,
+        });
+      },
     });
   }
 
@@ -120,9 +115,9 @@ export class DiscountWindowsManagementComponent {
           message: `¿Seguro que deseas eliminar la ventana "${w.name}"? Las órdenes futuras dejarán de recibir este descuento.`,
           confirmLabel: 'Eliminar',
           color: 'warn',
-          icon: 'delete_forever'
-        }
-      }
+          icon: 'delete_forever',
+        },
+      },
     );
     ref.afterClosed().subscribe((ok) => {
       if (!ok) return;
@@ -133,12 +128,10 @@ export class DiscountWindowsManagementComponent {
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiError | undefined;
-          this.snackBar.open(
-            apiError?.message ?? 'No se pudo eliminar',
-            'Cerrar',
-            { duration: 4000 }
-          );
-        }
+          this.snackBar.open(apiError?.message ?? 'No se pudo eliminar', 'Cerrar', {
+            duration: 4000,
+          });
+        },
       });
     });
   }

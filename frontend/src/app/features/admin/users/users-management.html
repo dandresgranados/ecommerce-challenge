@@ -68,11 +68,7 @@
           <button mat-icon-button (click)="openEdit(u)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="openPasswordChange(u)"
-            matTooltip="Cambiar contraseña"
-          >
+          <button mat-icon-button (click)="openPasswordChange(u)" matTooltip="Cambiar contraseña">
             <mat-icon>key</mat-icon>
           </button>
           <button
@@ -88,7 +84,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
       <tr *matNoDataRow>
         <td [attr.colspan]="displayedColumns.length" class="no-data">

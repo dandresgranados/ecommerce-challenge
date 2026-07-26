@@ -51,10 +51,10 @@ interface NavItem {
     MatButtonModule,
     MatMenuModule,
     MatDividerModule,
-    MatBadgeModule
+    MatBadgeModule,
   ],
   templateUrl: './layout.html',
-  styleUrl: './layout.scss'
+  styleUrl: './layout.scss',
 })
 export class LayoutComponent {
   private readonly breakpoint = inject(BreakpointObserver);
@@ -81,15 +81,18 @@ export class LayoutComponent {
     { label: 'Reportes', icon: 'bar_chart', route: '/reports', roles: ['ADMIN'] },
     { label: 'Usuarios', icon: 'group', route: '/admin/users', roles: ['ADMIN'] },
     { label: 'Categorías', icon: 'category', route: '/admin/categories', roles: ['ADMIN'] },
-    { label: 'Ventanas de descuento', icon: 'local_offer', route: '/admin/discount-windows', roles: ['ADMIN'] },
-    { label: 'Auditoría', icon: 'shield', route: '/admin/audit', roles: ['ADMIN'] }
+    {
+      label: 'Ventanas de descuento',
+      icon: 'local_offer',
+      route: '/admin/discount-windows',
+      roles: ['ADMIN'],
+    },
+    { label: 'Auditoría', icon: 'shield', route: '/admin/audit', roles: ['ADMIN'] },
   ];
 
   /** Items filtrados por el rol del usuario actual. */
   protected readonly navItems = computed<NavItem[]>(() =>
-    this.allNavItems.filter(
-      (item) => !item.roles || this.auth.hasRole(...item.roles)
-    )
+    this.allNavItems.filter((item) => !item.roles || this.auth.hasRole(...item.roles)),
   );
 
   constructor() {
@@ -98,7 +101,7 @@ export class LayoutComponent {
       .observe([Breakpoints.Handset])
       .pipe(
         map((result) => result.matches),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((matches) => {
         this.isMobile.set(matches);
@@ -109,7 +112,7 @@ export class LayoutComponent {
     this.router.events
       .pipe(
         filter((e) => e instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         if (this.isMobile()) {

@@ -7,7 +7,7 @@ import {
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
-  MatDialogTitle
+  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,11 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Category } from '../../../core/models/category.model';
 import { ApiError } from '../../../core/models/api-error.model';
-import {
-  Product,
-  ProductRequest,
-  ProductUpdateRequest
-} from '../../../core/models/product.model';
+import { Product, ProductRequest, ProductUpdateRequest } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 
 /** Datos que espera el diálogo. Si {@code product} es null → modo crear. */
@@ -60,17 +56,17 @@ export interface ProductFormDialogData {
     MatInputModule,
     MatSelectModule,
     MatSlideToggleModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './product-form-dialog.html',
-  styleUrl: './product-form-dialog.scss'
+  styleUrl: './product-form-dialog.scss',
 })
 export class ProductFormDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly productService = inject(ProductService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialogRef = inject(
-    MatDialogRef<ProductFormDialogComponent, Product | undefined>
+    MatDialogRef<ProductFormDialogComponent, Product | undefined>,
   );
 
   protected readonly data = inject<ProductFormDialogData>(MAT_DIALOG_DATA);
@@ -80,30 +76,18 @@ export class ProductFormDialogComponent {
   protected readonly form = this.fb.nonNullable.group({
     sku: [
       { value: this.data.product?.sku ?? '', disabled: this.isEdit },
-      [Validators.required, Validators.minLength(2), Validators.maxLength(64)]
+      [Validators.required, Validators.minLength(2), Validators.maxLength(64)],
     ],
     name: [
       this.data.product?.name ?? '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(128)]
+      [Validators.required, Validators.minLength(2), Validators.maxLength(128)],
     ],
-    description: [
-      this.data.product?.description ?? '',
-      [Validators.maxLength(512)]
-    ],
-    price: [
-      this.data.product?.price ?? 0,
-      [Validators.required, Validators.min(0.0001)]
-    ],
-    categoryId: [
-      this.data.product?.categoryId ?? 0,
-      [Validators.required, Validators.min(1)]
-    ],
+    description: [this.data.product?.description ?? '', [Validators.maxLength(512)]],
+    price: [this.data.product?.price ?? 0, [Validators.required, Validators.min(0.0001)]],
+    categoryId: [this.data.product?.categoryId ?? 0, [Validators.required, Validators.min(1)]],
     active: [this.data.product?.active ?? true],
-    initialStock: [
-      { value: 0, disabled: this.isEdit },
-      [Validators.min(0)]
-    ],
-    minStock: [{ value: 0, disabled: this.isEdit }, [Validators.min(0)]]
+    initialStock: [{ value: 0, disabled: this.isEdit }, [Validators.min(0)]],
+    minStock: [{ value: 0, disabled: this.isEdit }, [Validators.min(0)]],
   });
 
   onSubmit(): void {
@@ -120,7 +104,7 @@ export class ProductFormDialogComponent {
           description: values.description || undefined,
           price: values.price,
           categoryId: values.categoryId,
-          active: values.active
+          active: values.active,
         } satisfies ProductUpdateRequest)
       : this.productService.create({
           sku: values.sku,
@@ -130,16 +114,14 @@ export class ProductFormDialogComponent {
           categoryId: values.categoryId,
           active: values.active,
           initialStock: values.initialStock,
-          minStock: values.minStock
+          minStock: values.minStock,
         } satisfies ProductRequest);
 
     request$.subscribe({
       next: (product) => {
-        this.snackBar.open(
-          this.isEdit ? 'Producto actualizado' : 'Producto creado',
-          'Cerrar',
-          { duration: 3000 }
-        );
+        this.snackBar.open(this.isEdit ? 'Producto actualizado' : 'Producto creado', 'Cerrar', {
+          duration: 3000,
+        });
         this.dialogRef.close(product);
       },
       error: (err: HttpErrorResponse) => {
@@ -150,7 +132,7 @@ export class ProductFormDialogComponent {
           apiError?.message ??
           'No se pudo guardar el producto';
         this.snackBar.open(message, 'Cerrar', { duration: 5000 });
-      }
+      },
     });
   }
 

@@ -18,7 +18,7 @@ const fakeProduct: Product = {
   categoryName: 'Electrónica',
   stock: 20,
   createdAt: '2026-01-01T00:00:00Z',
-  updatedAt: '2026-01-01T00:00:00Z'
+  updatedAt: '2026-01-01T00:00:00Z',
 };
 
 const fakePage: PagedResponse<Product> = {
@@ -27,8 +27,8 @@ const fakePage: PagedResponse<Product> = {
     size: 10,
     number: 0,
     totalElements: 1,
-    totalPages: 1
-  }
+    totalPages: 1,
+  },
 };
 
 describe('ProductService', () => {
@@ -37,7 +37,7 @@ describe('ProductService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()]
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(ProductService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -57,13 +57,11 @@ describe('ProductService', () => {
     service
       .search(
         { name: '  teclado ', categoryId: 2, minPrice: 10, maxPrice: 100, active: true },
-        { page: 1, size: 20, sort: 'price,desc' }
+        { page: 1, size: 20, sort: 'price,desc' },
       )
       .subscribe();
 
-    const req = httpMock.expectOne(
-      (r) => r.url === `${environment.apiUrl}/products`
-    );
+    const req = httpMock.expectOne((r) => r.url === `${environment.apiUrl}/products`);
     expect(req.request.params.get('name')).toBe('teclado');
     expect(req.request.params.get('categoryId')).toBe('2');
     expect(req.request.params.get('minPrice')).toBe('10');
@@ -90,7 +88,7 @@ describe('ProductService', () => {
         price: 10,
         categoryId: 1,
         initialStock: 5,
-        minStock: 1
+        minStock: 1,
       })
       .subscribe((p) => expect(p.id).toBe(1));
 

@@ -20,8 +20,8 @@ const fakeResponse: AuthResponse = {
     active: true,
     roles: ['ADMIN', 'USER'],
     createdAt: '2026-01-01T00:00:00Z',
-    updatedAt: '2026-01-01T00:00:00Z'
-  }
+    updatedAt: '2026-01-01T00:00:00Z',
+  },
 };
 
 describe('AuthService', () => {
@@ -31,11 +31,7 @@ describe('AuthService', () => {
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([])
-      ]
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -105,11 +101,7 @@ describe('AuthService', () => {
     // Reset del TestBed para forzar una nueva instancia del servicio.
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([])
-      ]
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
     const restored = TestBed.inject(AuthService);
 

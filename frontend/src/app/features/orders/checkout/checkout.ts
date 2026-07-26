@@ -42,10 +42,10 @@ import { CreateOrderRequest } from '../../../core/models/order.model';
     MatProgressSpinnerModule,
     MatSlideToggleModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './checkout.html',
-  styleUrl: './checkout.scss'
+  styleUrl: './checkout.scss',
 })
 export class CheckoutComponent {
   private readonly fb = inject(FormBuilder);
@@ -58,7 +58,7 @@ export class CheckoutComponent {
   protected readonly displayedColumns = ['name', 'unitPrice', 'quantity', 'lineTotal', 'actions'];
 
   protected readonly form = this.fb.nonNullable.group({
-    randomOrder: [false]
+    randomOrder: [false],
   });
 
   /** Total mostrado — el desglose final de descuentos lo calcula el backend. */
@@ -66,7 +66,7 @@ export class CheckoutComponent {
 
   /** Estimación pre-orden mostrando el 50 % si el usuario marca randomOrder. */
   protected readonly estimatedDiscountLabel = computed(() =>
-    this.form.controls.randomOrder.value ? '~50 % (RANDOM)' : '—'
+    this.form.controls.randomOrder.value ? '~50 % (RANDOM)' : '—',
   );
 
   onQuantityChange(productId: number, event: Event): void {
@@ -97,9 +97,9 @@ export class CheckoutComponent {
     const request: CreateOrderRequest = {
       items: this.cart.items().map((it) => ({
         productId: it.productId,
-        quantity: it.quantity
+        quantity: it.quantity,
       })),
-      randomOrder: this.form.controls.randomOrder.value
+      randomOrder: this.form.controls.randomOrder.value,
     };
 
     this.orderService.create(request).subscribe({
@@ -108,21 +108,19 @@ export class CheckoutComponent {
         this.snackBar.open(
           `Orden ${order.orderNumber} creada (total $${order.total.toFixed(2)})`,
           'Cerrar',
-          { duration: 4000 }
+          { duration: 4000 },
         );
         void this.router.navigate(['/orders'], {
-          queryParams: { highlight: order.id }
+          queryParams: { highlight: order.id },
         });
       },
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'No se pudo crear la orden',
-          'Cerrar',
-          { duration: 5000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'No se pudo crear la orden', 'Cerrar', {
+          duration: 5000,
+        });
+      },
     });
   }
 }

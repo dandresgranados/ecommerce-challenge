@@ -5,7 +5,7 @@ import {
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
-  MatDialogTitle
+  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -30,10 +30,10 @@ import { Order } from '../../../core/models/order.model';
     MatChipsModule,
     MatDividerModule,
     MatIconModule,
-    MatTableModule
+    MatTableModule,
   ],
   templateUrl: './order-detail-dialog.html',
-  styleUrl: './order-detail-dialog.scss'
+  styleUrl: './order-detail-dialog.scss',
 })
 export class OrderDetailDialogComponent {
   protected readonly order = inject<Order>(MAT_DIALOG_DATA);
@@ -44,7 +44,7 @@ export class OrderDetailDialogComponent {
   protected readonly statusColor: Record<string, 'primary' | 'accent' | 'warn'> = {
     CREATED: 'accent',
     PAID: 'primary',
-    CANCELED: 'warn'
+    CANCELED: 'warn',
   };
 
   close(): void {

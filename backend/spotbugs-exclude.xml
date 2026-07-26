@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ===================================================================
+  SpotBugs — filtros de exclusión.
+
+  SpotBugs analiza el bytecode y detecta ~400 patrones de bugs.
+  Algunos son falsos positivos previsibles en proyectos Spring:
+  este archivo los silencia.
+  ===================================================================
+-->
+<FindBugsFilter>
+
+  <!-- Los DTOs (records) y las @Entity JPA suelen generar advertencias
+       "field is only written / never read" porque los serializa Jackson
+       y JPA por reflexión, no por acceso directo. Falso positivo. -->
+  <Match>
+    <Or>
+      <Class name="~.*\.dto\..*"/>
+      <Class name="~.*\.domain\..*"/>
+    </Or>
+    <Bug pattern="URF_UNREAD_FIELD,UWF_UNWRITTEN_FIELD,UUF_UNUSED_FIELD"/>
+  </Match>
+
+  <!-- Lombok genera setters que exponen colecciones mutables — es la
+       intención de la anotación @Setter y no un bug. -->
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
+
+  <!-- Ignorar tests en el análisis. -->
+  <Match>
+    <Class name="~.*Test$"/>
+  </Match>
+
+  <!-- Serializable en @Entity — Spring/JPA no lo requiere realmente. -->
+  <Match>
+    <Bug pattern="SE_NO_SERIALVERSIONID"/>
+  </Match>
+
+</FindBugsFilter>

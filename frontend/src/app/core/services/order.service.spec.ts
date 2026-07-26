@@ -19,7 +19,7 @@ const fakeOrder: Order = {
   discountBreakdown: { globalRate: 0.1, randomRate: 0, loyaltyRate: 0, totalRate: 0.1 },
   items: [],
   createdAt: '',
-  updatedAt: ''
+  updatedAt: '',
 };
 
 describe('OrderService', () => {
@@ -28,7 +28,7 @@ describe('OrderService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()]
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(OrderService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -54,7 +54,10 @@ describe('OrderService', () => {
     expect(req.request.params.get('page')).toBe('0');
     expect(req.request.params.get('size')).toBe('5');
     expect(req.request.params.get('sort')).toBe('createdAt,desc');
-    req.flush({ content: [fakeOrder], page: { size: 5, number: 0, totalElements: 1, totalPages: 1 } });
+    req.flush({
+      content: [fakeOrder],
+      page: { size: 5, number: 0, totalElements: 1, totalPages: 1 },
+    });
   });
 
   it('POST /orders/:id/pay', () => {

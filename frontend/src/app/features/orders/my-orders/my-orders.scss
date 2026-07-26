@@ -72,8 +72,12 @@
 }
 
 @keyframes highlight-fade {
-  0% { background: color-mix(in srgb, var(--mat-sys-primary) 25%, transparent); }
-  100% { background: transparent; }
+  0% {
+    background: color-mix(in srgb, var(--mat-sys-primary) 25%, transparent);
+  }
+  100% {
+    background: transparent;
+  }
 }
 
 mat-progress-bar {

@@ -72,19 +72,14 @@
           <button mat-icon-button (click)="openEdit(w)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button
-            mat-icon-button
-            color="warn"
-            (click)="confirmDelete(w)"
-            matTooltip="Eliminar"
-          >
+          <button mat-icon-button color="warn" (click)="confirmDelete(w)" matTooltip="Eliminar">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
       <tr *matNoDataRow>
         <td [attr.colspan]="displayedColumns.length" class="no-data">

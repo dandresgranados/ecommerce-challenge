@@ -9,7 +9,7 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
         <mat-form-field appearance="outline">
           <mat-label>Usuario</mat-label>
-          <input matInput formControlName="username" autocomplete="username" autofocus />
+          <input matInput formControlName="username" autocomplete="username" />
           <mat-icon matSuffix>person</mat-icon>
           @if (form.controls.username.hasError('required') && form.controls.username.touched) {
             <mat-error>El usuario es obligatorio</mat-error>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, AfterViewInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -19,7 +19,7 @@ import { Order, OrderStatus } from '../../../core/models/order.model';
 import { ApiError } from '../../../core/models/api-error.model';
 import {
   ConfirmDialogComponent,
-  ConfirmDialogData
+  ConfirmDialogData,
 } from '../../../shared/components/confirm-dialog.component';
 import { OrderDetailDialogComponent } from '../order-detail-dialog/order-detail-dialog';
 
@@ -46,12 +46,12 @@ import { OrderDetailDialogComponent } from '../order-detail-dialog/order-detail-
     MatPaginatorModule,
     MatProgressBarModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './my-orders.html',
-  styleUrl: './my-orders.scss'
+  styleUrl: './my-orders.scss',
 })
-export class MyOrdersComponent implements AfterViewInit {
+export class MyOrdersComponent implements AfterViewInit, OnInit {
   private readonly orderService = inject(OrderService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -70,19 +70,19 @@ export class MyOrdersComponent implements AfterViewInit {
     'items',
     'total',
     'status',
-    'actions'
+    'actions',
   ];
 
   protected readonly statusColor: Record<OrderStatus, 'primary' | 'accent' | 'warn'> = {
     CREATED: 'accent',
     PAID: 'primary',
-    CANCELED: 'warn'
+    CANCELED: 'warn',
   };
 
   protected readonly statusLabel: Record<OrderStatus, string> = {
     CREATED: 'Pendiente',
     PAID: 'Pagada',
-    CANCELED: 'Cancelada'
+    CANCELED: 'Cancelada',
   };
 
   /** Wrappers tipados para que los templates estrictos no fallen. */
@@ -120,12 +120,10 @@ export class MyOrdersComponent implements AfterViewInit {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'Error al cargar tus órdenes',
-          'Cerrar',
-          { duration: 4000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'Error al cargar tus órdenes', 'Cerrar', {
+          duration: 4000,
+        });
+      },
     });
   }
 
@@ -140,17 +138,15 @@ export class MyOrdersComponent implements AfterViewInit {
       next: (fullOrder) => {
         this.dialog.open(OrderDetailDialogComponent, {
           data: fullOrder,
-          width: '720px'
+          width: '720px',
         });
       },
       error: (err: HttpErrorResponse) => {
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'No se pudo cargar el detalle',
-          'Cerrar',
-          { duration: 4000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'No se pudo cargar el detalle', 'Cerrar', {
+          duration: 4000,
+        });
+      },
     });
   }
 
@@ -163,27 +159,25 @@ export class MyOrdersComponent implements AfterViewInit {
           message: `¿Confirmas el pago de la orden ${order.orderNumber} por un total de $${order.total.toFixed(2)}?`,
           confirmLabel: 'Pagar',
           color: 'primary',
-          icon: 'payments'
-        }
-      }
+          icon: 'payments',
+        },
+      },
     );
     ref.afterClosed().subscribe((ok) => {
       if (!ok) return;
       this.orderService.pay(order.id).subscribe({
         next: () => {
           this.snackBar.open(`Orden ${order.orderNumber} pagada`, 'Cerrar', {
-            duration: 3000
+            duration: 3000,
           });
           this.reload();
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiError | undefined;
-          this.snackBar.open(
-            apiError?.message ?? 'No se pudo pagar la orden',
-            'Cerrar',
-            { duration: 4000 }
-          );
-        }
+          this.snackBar.open(apiError?.message ?? 'No se pudo pagar la orden', 'Cerrar', {
+            duration: 4000,
+          });
+        },
       });
     });
   }
@@ -198,27 +192,25 @@ export class MyOrdersComponent implements AfterViewInit {
           confirmLabel: 'Cancelar orden',
           cancelLabel: 'No, mantener',
           color: 'warn',
-          icon: 'cancel'
-        }
-      }
+          icon: 'cancel',
+        },
+      },
     );
     ref.afterClosed().subscribe((ok) => {
       if (!ok) return;
       this.orderService.cancel(order.id).subscribe({
         next: () => {
           this.snackBar.open(`Orden ${order.orderNumber} cancelada`, 'Cerrar', {
-            duration: 3000
+            duration: 3000,
           });
           this.reload();
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiError | undefined;
-          this.snackBar.open(
-            apiError?.message ?? 'No se pudo cancelar la orden',
-            'Cerrar',
-            { duration: 4000 }
-          );
-        }
+          this.snackBar.open(apiError?.message ?? 'No se pudo cancelar la orden', 'Cerrar', {
+            duration: 4000,
+          });
+        },
       });
     });
   }

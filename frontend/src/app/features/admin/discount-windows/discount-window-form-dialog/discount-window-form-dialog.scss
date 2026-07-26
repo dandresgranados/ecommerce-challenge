@@ -26,6 +26,11 @@ mat-slide-toggle {
 }
 
 @media (max-width: 600px) {
-  .window-form { min-width: unset; }
-  .form-row { flex-direction: column; gap: 0; }
+  .window-form {
+    min-width: unset;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
 }

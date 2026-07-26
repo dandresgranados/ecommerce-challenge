@@ -29,10 +29,10 @@ import { ApiError } from '../../../core/models/api-error.model';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './register.html',
-  styleUrl: './register.scss'
+  styleUrl: './register.scss',
 })
 export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
@@ -47,7 +47,7 @@ export class RegisterComponent {
     username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(64)]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(128)]],
     fullName: ['', [Validators.maxLength(128)]],
-    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]]
+    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
   });
 
   onSubmit(): void {
@@ -62,12 +62,12 @@ export class RegisterComponent {
         username,
         email,
         password,
-        fullName: fullName?.trim() || undefined
+        fullName: fullName?.trim() || undefined,
       })
       .subscribe({
         next: () => {
           this.snackBar.open('¡Bienvenido! Tu cuenta se creó correctamente.', 'Cerrar', {
-            duration: 4000
+            duration: 4000,
           });
           void this.router.navigateByUrl('/');
         },
@@ -79,7 +79,7 @@ export class RegisterComponent {
               ? Object.values(apiError.fieldErrors)[0]
               : (apiError?.message ?? 'No se pudo registrar');
           this.snackBar.open(message, 'Cerrar', { duration: 5000 });
-        }
+        },
       });
   }
 }

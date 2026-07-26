@@ -17,26 +17,23 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { debounceTime, distinctUntilChanged, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DestroyRef } from '@angular/core';
+import { DestroyRef, OnInit } from '@angular/core';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { PageQuery, ProductService } from '../../../core/services/product.service';
 import { Category } from '../../../core/models/category.model';
-import {
-  Product,
-  ProductSearchCriteria
-} from '../../../core/models/product.model';
+import { Product, ProductSearchCriteria } from '../../../core/models/product.model';
 import {
   ConfirmDialogComponent,
-  ConfirmDialogData
+  ConfirmDialogData,
 } from '../../../shared/components/confirm-dialog.component';
 import {
   ProductFormDialogComponent,
-  ProductFormDialogData
+  ProductFormDialogData,
 } from '../product-form-dialog/product-form-dialog';
 import { ApiError } from '../../../core/models/api-error.model';
 
@@ -66,12 +63,12 @@ import { ApiError } from '../../../core/models/api-error.model';
     MatSlideToggleModule,
     MatSortModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './products-list.html',
-  styleUrl: './products-list.scss'
+  styleUrl: './products-list.scss',
 })
-export class ProductsListComponent implements AfterViewInit {
+export class ProductsListComponent implements AfterViewInit, OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly productService = inject(ProductService);
   private readonly categoryService = inject(CategoryService);
@@ -98,7 +95,7 @@ export class ProductsListComponent implements AfterViewInit {
     categoryId: [null as number | null],
     minPrice: [null as number | null],
     maxPrice: [null as number | null],
-    onlyActive: [true]
+    onlyActive: [true],
   });
 
   private paging: PageQuery = { page: 0, size: 10, sort: 'name,asc' };
@@ -107,13 +104,12 @@ export class ProductsListComponent implements AfterViewInit {
     // La columna "actions" se muestra siempre: contiene "añadir al carrito"
     // para todos y, adicionalmente, editar/eliminar para admin (condicionado
     // dentro de la celda con @if auth.isAdmin()).
-    this.displayedColumns.set(
-      ['sku', 'name', 'category', 'price', 'stock', 'active', 'actions']
-    );
+    this.displayedColumns.set(['sku', 'name', 'category', 'price', 'stock', 'active', 'actions']);
 
     this.categoryService.list().subscribe({
       next: (cats) => this.categories.set(cats),
-      error: () => this.snackBar.open('No se pudieron cargar las categorías', 'Cerrar', { duration: 4000 })
+      error: () =>
+        this.snackBar.open('No se pudieron cargar las categorías', 'Cerrar', { duration: 4000 }),
     });
 
     // Reactividad: cualquier cambio en el formulario reinicia la página y busca.
@@ -138,7 +134,7 @@ export class ProductsListComponent implements AfterViewInit {
       categoryId: filters.categoryId ?? undefined,
       minPrice: filters.minPrice ?? undefined,
       maxPrice: filters.maxPrice ?? undefined,
-      active: filters.onlyActive ? true : undefined
+      active: filters.onlyActive ? true : undefined,
     };
     this.productService.search(criteria, this.paging).subscribe({
       next: (page) => {
@@ -149,12 +145,10 @@ export class ProductsListComponent implements AfterViewInit {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         const apiError = err.error as ApiError | undefined;
-        this.snackBar.open(
-          apiError?.message ?? 'Error al cargar productos',
-          'Cerrar',
-          { duration: 4000 }
-        );
-      }
+        this.snackBar.open(apiError?.message ?? 'Error al cargar productos', 'Cerrar', {
+          duration: 4000,
+        });
+      },
     });
   }
 
@@ -167,7 +161,7 @@ export class ProductsListComponent implements AfterViewInit {
     this.paging = {
       ...this.paging,
       page: 0,
-      sort: sortState.direction ? `${sortState.active},${sortState.direction}` : undefined
+      sort: sortState.direction ? `${sortState.active},${sortState.direction}` : undefined,
     };
     if (this.paginator) this.paginator.firstPage();
     this.reload();
@@ -179,14 +173,14 @@ export class ProductsListComponent implements AfterViewInit {
       categoryId: null,
       minPrice: null,
       maxPrice: null,
-      onlyActive: true
+      onlyActive: true,
     });
   }
 
   openCreate(): void {
     const ref = this.dialog.open<ProductFormDialogComponent, ProductFormDialogData, Product>(
       ProductFormDialogComponent,
-      { data: { product: null, categories: this.categories() }, width: '520px' }
+      { data: { product: null, categories: this.categories() }, width: '520px' },
     );
     ref.afterClosed().subscribe((created) => {
       if (created) this.reload();
@@ -196,7 +190,7 @@ export class ProductsListComponent implements AfterViewInit {
   openEdit(product: Product): void {
     const ref = this.dialog.open<ProductFormDialogComponent, ProductFormDialogData, Product>(
       ProductFormDialogComponent,
-      { data: { product, categories: this.categories() }, width: '520px' }
+      { data: { product, categories: this.categories() }, width: '520px' },
     );
     ref.afterClosed().subscribe((updated) => {
       if (updated) this.reload();
@@ -212,9 +206,9 @@ export class ProductsListComponent implements AfterViewInit {
           message: `¿Seguro que deseas eliminar el producto "${product.name}" (SKU ${product.sku})? Esta acción no se puede deshacer.`,
           confirmLabel: 'Eliminar',
           color: 'warn',
-          icon: 'delete_forever'
-        }
-      }
+          icon: 'delete_forever',
+        },
+      },
     );
     ref.afterClosed().subscribe((confirmed) => {
       if (!confirmed) return;
@@ -225,12 +219,10 @@ export class ProductsListComponent implements AfterViewInit {
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiError | undefined;
-          this.snackBar.open(
-            apiError?.message ?? 'No se pudo eliminar el producto',
-            'Cerrar',
-            { duration: 4000 }
-          );
-        }
+          this.snackBar.open(apiError?.message ?? 'No se pudo eliminar el producto', 'Cerrar', {
+            duration: 4000,
+          });
+        },
       });
     });
   }
@@ -240,14 +232,12 @@ export class ProductsListComponent implements AfterViewInit {
     const added = this.cart.add(product, 1);
     if (added) {
       this.snackBar.open(`"${product.name}" añadido al carrito`, 'Cerrar', {
-        duration: 2500
+        duration: 2500,
       });
     } else {
-      this.snackBar.open(
-        `No hay más stock disponible de "${product.name}"`,
-        'Cerrar',
-        { duration: 3000 }
-      );
+      this.snackBar.open(`No hay más stock disponible de "${product.name}"`, 'Cerrar', {
+        duration: 3000,
+      });
     }
   }
 }
