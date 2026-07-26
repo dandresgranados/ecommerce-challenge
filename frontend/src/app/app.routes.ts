@@ -57,13 +57,10 @@ export const routes: Routes = [
       {
         path: 'reports',
         canActivate: [adminGuard],
-        component: PlaceholderComponent,
-        data: {
-          title: 'Reportes',
-          phase: 'Fase 4.5',
-          description:
-            'Dashboard con los 3 reportes: productos activos, top 5 más vendidos y top 5 clientes más frecuentes.'
-        },
+        loadComponent: () =>
+          import('./features/reports/reports-dashboard/reports-dashboard').then(
+            (m) => m.ReportsDashboardComponent
+          ),
         title: 'Reportes · TGS'
       },
       {

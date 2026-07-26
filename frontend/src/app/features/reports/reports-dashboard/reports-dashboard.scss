@@ -1,0 +1,213 @@
+:host {
+  display: block;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 500;
+  }
+
+  .subtitle {
+    margin: 0.25rem 0 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .limit-select {
+    width: 140px;
+    margin-bottom: -1.25em; // compensar el subscript wrapper
+  }
+}
+
+// ---------------- KPI row ----------------
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.kpi-card {
+  padding: 0.5rem;
+
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+  }
+}
+
+.kpi-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  &.primary {
+    background: color-mix(in srgb, var(--mat-sys-primary) 15%, transparent);
+    color: var(--mat-sys-primary);
+  }
+
+  &.accent {
+    background: color-mix(in srgb, var(--mat-sys-secondary) 15%, transparent);
+    color: var(--mat-sys-secondary);
+  }
+}
+
+.kpi-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.kpi-label {
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.kpi-value {
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0.15rem 0;
+}
+
+.kpi-hint {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// ---------------- Reportes tabulares ----------------
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.report-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.header-icon {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+  color: var(--mat-sys-primary);
+  font-size: 1.5rem;
+}
+
+.report-table {
+  width: 100%;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.rank {
+  font-weight: 500;
+  color: var(--mat-sys-primary);
+  font-size: 1.1rem;
+}
+
+.product-cell {
+  display: flex;
+  flex-direction: column;
+
+  .sku {
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+// Barras de progreso relativas.
+.bar-col {
+  width: 40%;
+  padding-left: 0.5rem !important;
+}
+
+.bar-track {
+  width: 100%;
+  height: 12px;
+  background: var(--mat-sys-surface-container);
+  border-radius: 6px;
+  overflow: hidden;
+
+  &.thin {
+    height: 6px;
+    margin-top: 0.2rem;
+  }
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+
+  &.primary-bar {
+    background: linear-gradient(
+      90deg,
+      var(--mat-sys-primary) 0%,
+      color-mix(in srgb, var(--mat-sys-primary) 70%, var(--mat-sys-secondary)) 100%
+    );
+  }
+
+  &.accent-bar {
+    background: var(--mat-sys-secondary);
+  }
+}
+
+.spent-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  align-items: flex-end;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--mat-sys-on-surface-variant);
+}
