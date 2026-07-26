@@ -54,14 +54,14 @@ jobs:
 
       - name: Upload JaCoCo HTML report
         if: always() # aunque los tests fallen, sube lo que haya
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-jacoco-report
           path: backend/target/site/jacoco/
           retention-days: 14
 
       - name: Upload JAR
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-jar
           path: backend/target/*.jar
@@ -99,7 +99,7 @@ jobs:
 
       - name: Upload SpotBugs report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-spotbugs-report
           path: backend/target/spotbugsXml.xml
@@ -107,7 +107,7 @@ jobs:
 
       - name: Upload Checkstyle report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-checkstyle-report
           path: backend/target/checkstyle-result.xml
