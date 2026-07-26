@@ -49,6 +49,11 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Make mvnw executable
+        # En Windows, Git no preserva el bit +x del wrapper de Maven.
+        # El runner Linux necesita permisos de ejecución explícitos.
+        run: chmod +x ./mvnw
+
       - name: Compile + tests + JaCoCo coverage
         run: ./mvnw -B -ntp verify
 
@@ -90,6 +95,9 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+
+      - name: Make mvnw executable
+        run: chmod +x ./mvnw
 
       - name: Run Checkstyle
         run: ./mvnw -B -ntp checkstyle:check

@@ -12,13 +12,14 @@ WORKDIR /build
 
 # Copiar solo el pom primero para aprovechar la caché de Docker:
 # si el pom no cambia, Docker reutiliza la capa con las dependencias
-# ya descargadas en builds posteriores.
+# ya descargadas en builds posteriores (el propio "package" las descarga).
 COPY pom.xml .
-RUN mvn -q dependency:go-offline -B
 
-# Ahora sí copiar todo el código y compilar (saltando tests: se ejecutan en CI).
+# Copiar el código y compilar (saltando tests: se ejecutan en el pipeline
+# de backend-ci.yml aparte).
+# Sin -q para ver los errores completos si algo falla en el CI.
 COPY src ./src
-RUN mvn -q clean package -DskipTests
+RUN mvn -B -ntp clean package -DskipTests
 
 # --------- STAGE 2: RUNTIME ---------
 FROM eclipse-temurin:17-jre AS runtime
