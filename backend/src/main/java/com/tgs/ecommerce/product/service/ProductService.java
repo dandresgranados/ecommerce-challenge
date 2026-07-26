@@ -6,6 +6,8 @@ import static com.tgs.ecommerce.product.repository.ProductSpecifications.isActiv
 import static com.tgs.ecommerce.product.repository.ProductSpecifications.priceGte;
 import static com.tgs.ecommerce.product.repository.ProductSpecifications.priceLte;
 
+import com.tgs.ecommerce.audit.domain.AuditAction;
+import com.tgs.ecommerce.audit.service.AuditService;
 import com.tgs.ecommerce.common.exception.BusinessRuleException;
 import com.tgs.ecommerce.common.exception.ResourceNotFoundException;
 import com.tgs.ecommerce.inventory.domain.Inventory;
@@ -44,6 +46,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
+    private final AuditService auditService;
 
     // ------------------------------------------------------------
     // Lectura
@@ -107,6 +110,9 @@ public class ProductService {
         inventoryRepository.save(inv);
 
         log.info("Producto creado: id={} sku={} stock={}", saved.getId(), saved.getSku(), initial);
+        auditService.log(AuditAction.CREATE, "Product", saved.getId(),
+            "sku=" + saved.getSku() + " name=" + saved.getName()
+            + " price=" + saved.getPrice() + " initialStock=" + initial);
         return ProductMapper.toResponse(saved, initial);
     }
 
@@ -128,6 +134,8 @@ public class ProductService {
         Integer stock = inventoryRepository.findByProductId(id)
             .map(Inventory::getQuantity).orElse(null);
         log.info("Producto actualizado id={}", id);
+        auditService.log(AuditAction.UPDATE, "Product", id,
+            "sku=" + p.getSku() + " changes=" + summarizeUpdate(request));
         return ProductMapper.toResponse(p, stock);
     }
 
@@ -141,6 +149,19 @@ public class ProductService {
             .orElseThrow(() -> ResourceNotFoundException.of("Producto", id));
         p.setActive(false);
         log.info("Producto desactivado (soft-delete) id={}", id);
+        auditService.log(AuditAction.DELETE, "Product", id, "sku=" + p.getSku());
+    }
+
+    /** Resumen legible de los campos actualizados (para el log de auditoría). */
+    private String summarizeUpdate(ProductUpdateRequest r) {
+        StringBuilder sb = new StringBuilder();
+        if (r.name()        != null) sb.append("name,");
+        if (r.description() != null) sb.append("description,");
+        if (r.price()       != null) sb.append("price=").append(r.price()).append(",");
+        if (r.categoryId()  != null) sb.append("categoryId=").append(r.categoryId()).append(",");
+        if (r.active()      != null) sb.append("active=").append(r.active()).append(",");
+        if (sb.length() == 0) return "noop";
+        return sb.substring(0, sb.length() - 1);
     }
 
     // ------------------------------------------------------------

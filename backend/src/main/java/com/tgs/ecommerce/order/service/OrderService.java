@@ -1,5 +1,7 @@
 package com.tgs.ecommerce.order.service;
 
+import com.tgs.ecommerce.audit.domain.AuditAction;
+import com.tgs.ecommerce.audit.service.AuditService;
 import com.tgs.ecommerce.common.exception.BusinessRuleException;
 import com.tgs.ecommerce.common.exception.ResourceNotFoundException;
 import com.tgs.ecommerce.inventory.domain.Inventory;
@@ -58,6 +60,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final DiscountCalculator discountCalculator;
     private final OrderNumberGenerator orderNumberGenerator;
+    private final AuditService auditService;
 
     // ------------------------------------------------------------
     // Creación
@@ -156,6 +159,12 @@ public class OrderService {
         log.info("Orden creada: number={} user={} subtotal={} discountRate={} total={}",
             saved.getOrderNumber(), user.getUsername(), subtotal,
             breakdown.totalRate(), total);
+        auditService.log(AuditAction.CREATE, "Order", saved.getId(),
+            "orderNumber=" + saved.getOrderNumber()
+            + " subtotal=" + subtotal
+            + " discountRate=" + breakdown.totalRate()
+            + " total=" + total
+            + " randomOrder=" + request.isRandomOrder());
 
         return OrderMapper.toResponse(saved, breakdown);
     }
@@ -203,6 +212,8 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.PAID);
         log.info("Orden pagada: {}", order.getOrderNumber());
+        auditService.log(AuditAction.PAY, "Order", order.getId(),
+            "orderNumber=" + order.getOrderNumber() + " total=" + order.getTotal());
         return OrderMapper.toResponse(order, null);
     }
 
@@ -232,6 +243,8 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.CANCELED);
         log.info("Orden cancelada y stock devuelto: {}", order.getOrderNumber());
+        auditService.log(AuditAction.CANCEL, "Order", order.getId(),
+            "orderNumber=" + order.getOrderNumber() + " itemsRestored=" + items.size());
         return OrderMapper.toResponse(order, null);
     }
 }

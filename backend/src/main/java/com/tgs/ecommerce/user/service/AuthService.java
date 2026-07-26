@@ -1,5 +1,7 @@
 package com.tgs.ecommerce.user.service;
 
+import com.tgs.ecommerce.audit.domain.AuditAction;
+import com.tgs.ecommerce.audit.service.AuditService;
 import com.tgs.ecommerce.common.exception.BusinessRuleException;
 import com.tgs.ecommerce.security.CustomUserDetails;
 import com.tgs.ecommerce.security.JwtProperties;
@@ -44,16 +46,25 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final JwtProperties jwtProperties;
+    private final AuditService auditService;
 
     /**
      * Autentica al usuario y devuelve el JWT + información pública.
      */
     public AuthResponse login(LoginRequest request) {
-        Authentication auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.username(), request.password())
-        );
-        CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
-        return toAuthResponse(details);
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.username(), request.password())
+            );
+            CustomUserDetails details = (CustomUserDetails) auth.getPrincipal();
+            auditService.log(AuditAction.LOGIN, "User", details.getUser().getId(),
+                "username=" + details.getUsername());
+            return toAuthResponse(details);
+        } catch (org.springframework.security.core.AuthenticationException ex) {
+            auditService.log(AuditAction.LOGIN_FAILED, "User", null,
+                "username=" + request.username() + " reason=" + ex.getClass().getSimpleName());
+            throw ex;
+        }
     }
 
     /**
@@ -83,6 +94,8 @@ public class AuthService {
 
         User saved = userRepository.save(user);
         log.info("Usuario registrado: {}", saved.getUsername());
+        auditService.log(AuditAction.REGISTER, "User", saved.getId(),
+            "username=" + saved.getUsername() + " email=" + saved.getEmail());
 
         return toAuthResponse(new CustomUserDetails(saved));
     }

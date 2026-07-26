@@ -1,5 +1,7 @@
 package com.tgs.ecommerce.user.service;
 
+import com.tgs.ecommerce.audit.domain.AuditAction;
+import com.tgs.ecommerce.audit.service.AuditService;
 import com.tgs.ecommerce.common.exception.BusinessRuleException;
 import com.tgs.ecommerce.common.exception.ResourceNotFoundException;
 import com.tgs.ecommerce.user.domain.Role;
@@ -33,6 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<UserResponse> list(Pageable pageable) {
@@ -74,6 +77,8 @@ public class UserService {
 
         User saved = userRepository.save(user);
         log.info("Usuario creado por ADMIN: {} (roles={})", saved.getUsername(), request.roles());
+        auditService.log(AuditAction.CREATE, "User", saved.getId(),
+            "username=" + saved.getUsername() + " roles=" + request.roles());
         return UserMapper.toResponse(saved);
     }
 
@@ -99,6 +104,7 @@ public class UserService {
         }
 
         log.info("Usuario actualizado id={}", id);
+        auditService.log(AuditAction.UPDATE, "User", id, "username=" + user.getUsername());
         return UserMapper.toResponse(user);
     }
 
@@ -108,6 +114,7 @@ public class UserService {
             .orElseThrow(() -> ResourceNotFoundException.of("Usuario", id));
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
         log.info("Contraseña cambiada para userId={}", id);
+        auditService.log(AuditAction.PASSWORD_CHANGE, "User", id, "username=" + user.getUsername());
     }
 
     @Transactional
@@ -118,6 +125,7 @@ public class UserService {
         // pero lo desactivamos y no podrá volver a iniciar sesión.
         user.setActive(false);
         log.info("Usuario desactivado (soft-delete) id={}", id);
+        auditService.log(AuditAction.DELETE, "User", id, "username=" + user.getUsername());
     }
 
     private Set<Role> resolveRoles(Set<RoleName> names) {
