@@ -87,11 +87,17 @@ public class SecurityConfig implements WebMvcConfigurer {
         return cfg.getAuthenticationManager();
     }
 
-    /** CORS: permite al frontend Angular (localhost:4200) llamar al API. */
+    /**
+     * CORS: permite al frontend Angular llamar al API tanto en:
+     * <ul>
+     *   <li>{@code http://localhost:4200} — dev server ({@code ng serve}).</li>
+     *   <li>{@code http://localhost:8080} — nginx del docker-compose sirviendo la SPA.</li>
+     * </ul>
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-            .allowedOrigins("http://localhost:4200")
+            .allowedOrigins("http://localhost:4200", "http://localhost:8080")
             .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
             .allowedHeaders("*")
             .exposedHeaders("Authorization")
