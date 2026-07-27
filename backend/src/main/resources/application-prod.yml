@@ -24,19 +24,29 @@ spring:
       # las migraciones y hacer un ddl-auto: validate).
       ddl-auto: update
     show-sql: false
+    # Ejecuta data.sql DESPUÉS de que Hibernate cree las tablas.
+    # Necesario porque DataInitializer depende de los roles insertados por data.sql.
+    defer-datasource-initialization: true
     properties:
       hibernate:
         # Asegura que Hibernate serialice/deserialize fechas siempre en UTC,
         # independientemente de la zona horaria del contenedor.
         jdbc.time_zone: UTC
 
-  # Sin consola H2 ni scripts de inicialización en prod.
+  # Sin consola H2 en prod. data.sql se ejecuta para insertar los roles base
+  # (ADMIN/USER) que necesita DataInitializer al arrancar por primera vez.
+  # Los INSERT del script solo corren si la tabla está vacía en el primer
+  # arranque (ddl-auto: update no recrea tablas), así que es idempotente.
   h2:
     console:
       enabled: false
   sql:
     init:
-      mode: never
+      mode: always
+      encoding: UTF-8
+      # No aborta si un INSERT falla por PK duplicada (útil si el volumen
+      # ya trae datos de un arranque previo).
+      continue-on-error: true
 
 logging:
   level:
