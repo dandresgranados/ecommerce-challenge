@@ -1,5 +1,7 @@
 package com.tgs.ecommerce.order.service;
 
+import com.tgs.ecommerce.audit.domain.AuditAction;
+import com.tgs.ecommerce.audit.service.AuditService;
 import com.tgs.ecommerce.common.exception.BusinessRuleException;
 import com.tgs.ecommerce.common.exception.ResourceNotFoundException;
 import com.tgs.ecommerce.order.domain.DiscountWindow;
@@ -25,7 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DiscountWindowService {
 
+    /** Nombre de entidad usado en la auditoría — evita magic string. */
+    private static final String ENTITY_NAME = "DiscountWindow";
+
     private final DiscountWindowRepository repository;
+    private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public List<DiscountWindowResponse> listAll() {
@@ -38,7 +44,7 @@ public class DiscountWindowService {
     public DiscountWindowResponse getById(Long id) {
         return repository.findById(id)
             .map(DiscountWindowMapper::toResponse)
-            .orElseThrow(() -> ResourceNotFoundException.of("DiscountWindow", id));
+            .orElseThrow(() -> ResourceNotFoundException.of(ENTITY_NAME, id));
     }
 
     @Transactional
@@ -54,6 +60,11 @@ public class DiscountWindowService {
             .build();
         DiscountWindow saved = repository.save(w);
         log.info("DiscountWindow creada: id={} type={} rate={}", saved.getId(), saved.getType(), saved.getRate());
+        auditService.log(AuditAction.CREATE, ENTITY_NAME, saved.getId(),
+            "name=" + saved.getName()
+            + " type=" + saved.getType()
+            + " rate=" + saved.getRate()
+            + " active=" + saved.getActive());
         return DiscountWindowMapper.toResponse(saved);
     }
 
@@ -61,24 +72,32 @@ public class DiscountWindowService {
     public DiscountWindowResponse update(Long id, DiscountWindowRequest request) {
         validateRange(request);
         DiscountWindow w = repository.findById(id)
-            .orElseThrow(() -> ResourceNotFoundException.of("DiscountWindow", id));
+            .orElseThrow(() -> ResourceNotFoundException.of(ENTITY_NAME, id));
         w.setName(request.name());
         w.setType(request.type());
         w.setRate(request.rate());
         w.setStartAt(request.startAt());
         w.setEndAt(request.endAt());
-        if (request.active() != null) w.setActive(request.active());
+        if (request.active() != null) {
+            w.setActive(request.active());
+        }
         log.info("DiscountWindow actualizada id={}", id);
+        auditService.log(AuditAction.UPDATE, ENTITY_NAME, id,
+            "name=" + w.getName()
+            + " type=" + w.getType()
+            + " rate=" + w.getRate()
+            + " active=" + w.getActive());
         return DiscountWindowMapper.toResponse(w);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw ResourceNotFoundException.of("DiscountWindow", id);
-        }
+        DiscountWindow w = repository.findById(id)
+            .orElseThrow(() -> ResourceNotFoundException.of(ENTITY_NAME, id));
+        String snapshot = "name=" + w.getName() + " type=" + w.getType();
         repository.deleteById(id);
         log.info("DiscountWindow eliminada id={}", id);
+        auditService.log(AuditAction.DELETE, ENTITY_NAME, id, snapshot);
     }
 
     private void validateRange(DiscountWindowRequest r) {

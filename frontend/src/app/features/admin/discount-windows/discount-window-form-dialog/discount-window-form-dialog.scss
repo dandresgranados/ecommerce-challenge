@@ -21,6 +21,23 @@ h2[mat-dialog-title] {
   flex: 1;
 }
 
+// Nota explicativa sobre los tipos GLOBAL/RANDOM. Va fuera de los mat-form-field
+// para no chocar con el subscript wrapper que Angular Material reserva bajo cada
+// campo (donde normalmente aparecen los mat-hint / mat-error).
+.type-help {
+  margin: -0.5rem 0 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--mat-sys-on-surface-variant);
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+  border-radius: 6px;
+
+  strong {
+    color: var(--mat-sys-primary);
+  }
+}
+
 mat-slide-toggle {
   margin: 0.5rem 0;
 }

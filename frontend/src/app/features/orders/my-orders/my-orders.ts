@@ -138,7 +138,8 @@ export class MyOrdersComponent implements AfterViewInit, OnInit {
       next: (fullOrder) => {
         this.dialog.open(OrderDetailDialogComponent, {
           data: fullOrder,
-          width: '720px',
+          width: '900px',
+          maxWidth: '95vw',
         });
       },
       error: (err: HttpErrorResponse) => {

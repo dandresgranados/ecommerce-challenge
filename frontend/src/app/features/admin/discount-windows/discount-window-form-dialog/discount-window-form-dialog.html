@@ -21,9 +21,6 @@
             <mat-option [value]="t">{{ t }}</mat-option>
           }
         </mat-select>
-        <mat-hint>
-          GLOBAL: se aplica siempre. RANDOM: solo si el usuario marca "pedido aleatorio".
-        </mat-hint>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="flex-1">
@@ -38,6 +35,13 @@
         }
       </mat-form-field>
     </div>
+
+    <!-- Ayuda contextual sobre los tipos. Va fuera de los form-fields para
+         no romper el layout con el subscript-wrapper de Angular Material. -->
+    <p class="type-help">
+      <strong>GLOBAL:</strong> se aplica siempre.
+      <strong>RANDOM:</strong> solo si el usuario marca "pedido aleatorio".
+    </p>
 
     <div class="form-row">
       <mat-form-field appearance="outline" class="flex-1">

@@ -10,10 +10,20 @@ h2[mat-dialog-title] {
 }
 
 mat-dialog-content {
-  min-width: 620px;
+  // Ancho automático: se adapta al width que le pasa el llamador (900px).
+  // Evita scroll horizontal restringiendo cualquier contenido interno.
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
-  @media (max-width: 720px) {
-    min-width: unset;
+// La tabla se hace fluida y las celdas pueden partir texto largo.
+.items-table {
+  width: 100%;
+  table-layout: fixed;
+
+  th,
+  td {
+    word-break: break-word;
   }
 }
 
@@ -32,11 +42,6 @@ mat-dialog-content {
 h3 {
   margin: 1rem 0 0.5rem;
   font-weight: 500;
-}
-
-.items-table {
-  width: 100%;
-  margin-bottom: 0.5rem;
 }
 
 .right {
