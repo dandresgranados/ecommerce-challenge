@@ -16,16 +16,16 @@ UI en → http://localhost:4200 (proxya `/api/*` al backend en `:8080`).
 
 ## 📦 Scripts npm
 
-| Comando | Qué hace |
-|---|---|
-| `npm start` | Dev server con HMR (`ng serve`) |
-| `npm run build` | Build de producción (`ng build`) |
-| `npm test` | Tests en modo watch (Vitest) |
-| `npm run test:ci` | Una pasada con coverage v8 (HTML + lcov) |
-| `npm run lint` | ESLint sobre todo el código |
-| `npm run lint:fix` | ESLint con autofix |
-| `npm run format` | Aplica Prettier |
-| `npm run format:check` | Verifica formato sin aplicar |
+| Comando                | Qué hace                                 |
+| ---------------------- | ---------------------------------------- |
+| `npm start`            | Dev server con HMR (`ng serve`)          |
+| `npm run build`        | Build de producción (`ng build`)         |
+| `npm test`             | Tests en modo watch (Vitest)             |
+| `npm run test:ci`      | Una pasada con coverage v8 (HTML + lcov) |
+| `npm run lint`         | ESLint sobre todo el código              |
+| `npm run lint:fix`     | ESLint con autofix                       |
+| `npm run format`       | Aplica Prettier                          |
+| `npm run format:check` | Verifica formato sin aplicar             |
 
 ## 🧩 Estructura por feature
 
@@ -69,14 +69,14 @@ src/app/
 
 ## 🧪 Tests (32 total)
 
-| Suite | Tests |
-|---|---|
-| `AppComponent` | 2 |
-| `AuthService` | 6 |
-| `ProductService` | 6 |
-| `CartService` | 9 |
-| `OrderService` | 5 |
-| `ReportService` | 4 |
+| Suite            | Tests |
+| ---------------- | ----- |
+| `AppComponent`   | 2     |
+| `AuthService`    | 6     |
+| `ProductService` | 6     |
+| `CartService`    | 9     |
+| `OrderService`   | 5     |
+| `ReportService`  | 4     |
 
 **Cobertura**: 93 % líneas · 89 % branches · 92 % funciones · 91 % statements
 
@@ -85,14 +85,16 @@ src/app/
 Definido en [src/styles.scss](src/styles.scss):
 
 ```scss
-@include mat.theme((
-  color: (
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  typography: Roboto,
-  density: 0,
-));
+@include mat.theme(
+  (
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  )
+);
 ```
 
 Todos los componentes usan variables del sistema `--mat-sys-*` para adaptarse
